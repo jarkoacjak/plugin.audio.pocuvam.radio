@@ -34,6 +34,9 @@ def main():
     # --- 2. ZOZNAM SLOVENSKÝCH RÁDIÍ ---
     elif params.get('country') == 'sk':
         radia_sk = [
+            {"nazov": "Rádio Beta Česko a Slovenské Hity", "url": "http://109.71.67.102:8000/beta_cspop.mp3", "logo": "https://cdn.radia.sk/_radia/loga/app/beta-cz-sk-hity.webp?v=1"},
+            {"nazov": "Rádio Beta 80'S a 90'S", "url": "http://109.71.67.102:8000/beta_80a90.mp3", "logo": "https://cdn.radia.sk/_radia/loga/app/beta-hity-80s-90s.webp?v=1"},
+            {"nazov": "Rádio Beta Hráme jubilantom", "url": "http://109.71.67.102:8000/beta_jubilanti.mp3", "logo": "https://cdn.radia.sk/_radia/loga/coverflow/beta-hrame-jubilantom.png"},
             {"nazov": "Rádio Bela", "url": "http://65.109.81.84:8855/live", "logo": "https://cdn.radia.sk/_radia/loga/coverflow/bela.png"},
             {"nazov": "Rádio Best FM", "url": "https://stream3.bestfm.sk:8000/160.aac", "logo": "https://bestfm.sk/wp-content/uploads/2021/09/logo_transparent.png"},
             {"nazov": "Rádio Basavel", "url": "https://stream.zeno.fm/6gd9c6yn4nhvv", "logo": "https://cdn.radia.sk/_radia/loga/coverflow/basavel.png"},
@@ -108,4 +111,4 @@ def zobraz_radia(handle, zoznam):
 
 if __name__ == '__main__':
     main()
-
+    
