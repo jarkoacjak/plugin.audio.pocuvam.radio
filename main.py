@@ -34,6 +34,8 @@ def main():
     # --- 2. ZOZNAM SLOVENSKÝCH RÁDIÍ ---
     elif params.get('country') == 'sk':
         radia_sk = [
+            {"nazov": "Rádio 7", "url": "https://play.radio7.sk/128", "logo": "https://cdn.radia.sk/_radia/loga/coverflow/7.png"},
+            {"nazov": "Rádio 9", "url": "http://147.232.191.167:8000/high.mp3", "logo": "https://cdn.radia.sk/_radia/loga/coverflow/9.png"},
             {"nazov": "PARTY RADIO", "url": "https://mpc1.mediacp.eu/stream/partyradio", "logo": "http://files.exoweb.eu/13/40/13404079-0cdd-42be-88cd-e832e3e5542c.jpeg"},
             {"nazov": "Rádio Viva", "url": "http://stream.sepia.sk:8000/viva320.mp3", "logo": "https://myonlineradio.sk/public/uploads/radio_img/radio-viva/play_250_250.webp"},
             {"nazov": "Fresh Rádio", "url": "https://icecast2.radionet.sk/freshradio.sk", "logo": "https://myonlineradio.sk/public/uploads/radio_img/fresh-radio/play_250_250.webp"},
@@ -109,4 +111,4 @@ def zobraz_radia(handle, zoznam):
 
 if __name__ == '__main__':
     main()
-
+    
