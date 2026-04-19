@@ -34,6 +34,8 @@ def main():
     # --- 2. ZOZNAM SLOVENSKÝCH RÁDIÍ ---
     elif params.get('country') == 'sk':
         radia_sk = [
+            {"nazov": "Rádio FanWaves", "url": "https://stream.zeno.fm/gtkbdehhekftv", "logo": "https://images.zeno.fm/ZtUvkDMtkuf8ykYmi9VmIi3zRsaaaKixAoEEe6F5Tzk/rs:fill:288:288/g:ce:0:0/aHR0cHM6Ly9wcm94eS56ZW5vLmZtL2NvbnRlbnQvc3RhdGlvbnMvYzFkZDQwMDYtMjJkNC00NjYyLWIyZGMtZjNjNTVlYmY2YWVlL2ltYWdlLz91PTE3NTUzNjM0NjEwMDA.webp"},
+            {"nazov": "Rádio Folk", "url": "https://mpc1.mediacp.eu/stream/demo2", "logo": "https://www.radiofolk.sk/wp-content/uploads/2021/08/cropped-cropped-cropped-Logo-pre-web.png"},
             {"nazov": "Rádio Biblia", "url": "http://radiobiblia.online:8000/stream.ogg", "logo": "https://myonlineradio.sk/public/uploads/radio_img/radio-biblia/play_250_250.webp"},
             {"nazov": "Rádio Extra", "url": "http://live.topradio.cz:8000/extra192", "logo": "https://myonlineradio.sk/public/uploads/radio_img/radio-extra/fb_cover.jpg"},
             {"nazov": "Rádio Beta Česko a Slovenské Hity", "url": "http://109.71.67.102:8000/beta_cspop.mp3", "logo": "https://cdn.radia.sk/_radia/loga/app/beta-cz-sk-hity.webp?v=1"},
