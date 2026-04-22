@@ -16,6 +16,8 @@ def main():
 
     # --- KOMPLETNÁ DATABÁZA SLOVENSKÝCH RÁDIÍ ---
     radia_sk = [
+        {"nazov": "Radio Slovakia International", "url": "https://icecast.stv.livebox.sk/rsi_128.mp3", "logo": "https://cdn.radia.sk/_radia/loga/coverflow/slovakia-international.png"},
+        {"nazov": "Rádio Šírava", "url": "http://stream.sepia.sk:8000/radiosirava.mp3", "logo": "https://cdn.radia.sk/_radia/loga/app/sirava.webp?v=2"},
         {"nazov": "Rádio Rock SV", "url": "https://s2.myradiostream.com/:4870/listen.mp3", "logo": "https://cdn.radia.sk/_radia/loga/coverflow/rock-sv.png"},
         {"nazov": "Rádio Sity", "url": "https://radiosity.online:8000/aac", "logo": "https://cdn.radia.sk/_radia/loga/coverflow/sity.png"},
         {"nazov": "Rádio Pyramída", "url": "https://icecast.stv.livebox.sk/pyramida_128.mp3", "logo": "https://www.radiomix.sk/wp-content/uploads/2024/01/radio-pyramida-560x560.png"},
@@ -131,7 +133,7 @@ def main():
             xbmcplugin.addDirectoryItem(handle, build_url(p), li, True)
         xbmcplugin.endOfDirectory(handle)
 
-    # --- 4. FUNKCIA: VYHĽADÁVANIE (OPRAVENÉ) ---
+    # --- 4. FUNKCIA: VYHĽADÁVANIE ---
     elif params.get('action') == 'search':
         kb = xbmcgui.Dialog().input('Hľadať rádio', type=xbmcgui.INPUT_ALPHANUM)
         if kb:
@@ -152,10 +154,10 @@ def main():
         zobraz_radia(handle, radia_cz)
 
     elif params.get('action') == 'latest':
-        zobraz_radia(handle, radia_sk[:5]) # Rock SV a Sity sú teraz na začiatku
+        zobraz_radia(handle, radia_sk[:5]) # Zobrazí prvé v zozname (RSI, Šírava...)
 
     elif params.get('action') == 'top10_sk':
-        zobraz_radia(handle, radia_sk[:10])
+        zobraz_radia(handle, radia_sk[-10:])
 
     elif params.get('action') == 'msg':
         xbmcgui.Dialog().ok("Informácia", params.get('text', 'Pripravujeme sa'))
