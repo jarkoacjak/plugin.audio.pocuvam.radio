@@ -16,6 +16,8 @@ def main():
 
     # --- KOMPLETNÁ DATABÁZA SLOVENSKÝCH RÁDIÍ ---
     radia_sk = [
+        {"nazov": "Sky Rádio", "url": "http://stream.skyradio.sk:8000/sky128", "logo": "https://cdn.radia.sk/_radia/loga/coverflow/sky.png"},
+        {"nazov": "Rádio Slobodný Vysielač", "url": "https://vysielanie.online/radio/8020/SV128.mp3", "logo": "https://myonlineradio.sk/public/uploads/radio_img/slobodny-vysielac/play_250_250.webp"},
         {"nazov": "Rádio Zábava", "url": "https://stream.zeno.fm/eyac00cx1nhvv", "logo": "https://cdn.radia.sk/_radia/loga/app/zabava.webp?v=2"},
         {"nazov": "Rádio Rusyn FM", "url": "https://stream.rusyn.fm/rusyny.mp3", "logo": "https://myonlineradio.sk/public/uploads/radio_img/rusyn-fm/play_250_250.webp"},
         {"nazov": "Rádio X - Metal X", "url": "https://stream.radiox.sk:8443/metal.mp3", "logo": "https://myonlineradio.sk/public/uploads/radio_img/radio-x/play_250_250.webp"},
@@ -172,7 +174,7 @@ def main():
         zobraz_radia(handle, radia_cz)
 
     elif params.get('action') == 'latest':
-        zobraz_radia(handle, radia_sk[:5]) # Prvé v zozname (Zábava, Rusyn FM...)
+        zobraz_radia(handle, radia_sk[:5]) # Prvé v zozname (Sky, Slobodný Vysielač...)
 
     elif params.get('action') == 'top10_sk':
         zobraz_radia(handle, radia_sk[-10:])
