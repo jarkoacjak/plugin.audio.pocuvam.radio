@@ -174,9 +174,7 @@ def main():
                 zobraz_radia(handle, vysledky)
             else:
                 xbmcgui.Dialog().ok("Hľadanie", "Nenašli sa výsledky pre: " + kb)
-        xbmcplugin.endOfDirec
-
-xbmcplugin.endOfDirectory(handle)
+        xbmcplugin.endOfDirectory(handle)
 
     elif params.get('country') == 'sk':
         zobraz_radia(handle, radia_sk)
