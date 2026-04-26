@@ -19,6 +19,8 @@ def main():
 
     # --- KOMPLETNÁ DATABÁZA RÁDIÍ ---
     radia_sk = [
+        {"nazov": "Fun Rádio Leto", "url": "https://stream.funradio.sk:8000/summer128.mp3", "logo": "https://cdn.radia.sk/_radia/loga/app/fun-letne-hity.webp?v=11"},
+        {"nazov": "Fun Rádio Mileniálky", "url": "https://stream.funradio.sk:8000/milenialky128.mp3", "logo": "https://cdn.radia.sk/_radia/loga/coverflow/fun-milenialky.png"},
         {"nazov": "Fun Rádio Dance", "url": "http://stream.funradio.sk:8000/dance128.mp3", "logo": "https://cdn.radia.sk/_radia/loga/coverflow/fun-dance.png"},
         {"nazov": "Fun Rádio Chill", "url": "https://stream.funradio.sk/chill128.mp3", "logo": "https://cdn.radia.sk/_radia/loga/coverflow/fun-chill.png"},
         {"nazov": "Fun Rádio 80's - 90's", "url": "http://stream.funradio.sk:8000/80-90-128.mp3", "logo": "https://cdn.radia.sk/_radia/loga/nadpis/fun-80-90-roky.webp?v=1"},
