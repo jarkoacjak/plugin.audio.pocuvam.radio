@@ -7,7 +7,6 @@ def build_url(query):
     return sys.argv[0] + '?' + urllib.parse.urlencode(query)
 
 def main():
-    # OPRAVA CHYBY DENNÍKA: Kontrola argumentov
     if len(sys.argv) < 2:
         return
 
@@ -18,7 +17,7 @@ def main():
     except (IndexError, ValueError):
         return
 
-    # --- KOMPLETNÁ DATABÁZA SLOVENSKÝCH RÁDIÍ ---
+    # --- KOMPLETNÁ DATABÁZA SLOVENSKÝCH RÁDIÍ (Všetky stanice vrátené) ---
     radia_sk = [
         {"nazov": "V2Beat Radio", "url": "https://de1se01.v2beat.live/icecast.audio", "logo": "https://app.v2beat.com/images/viib-v2beat-logo-neon.jpg"},
         {"nazov": "Záhorácke Rádio", "url": "http://live.zahorackeradio.sk:8080/zr128.mp3", "logo": "https://cdn.radia.sk/_radia/loga/app/zahoracke.webp?v=1"},
@@ -120,14 +119,13 @@ def main():
         {"nazov": "Rádio Vlna", "url": "http://stream.radiovlna.sk/vlna-hi.mp3", "logo": "https://myonlineradio.sk/public/uploads/radio_img/radio-vlna/play_250_250.webp"}
     ]
 
-    # --- KOMPLETNÁ DATABÁZA ČESKÝCH RÁDIÍ ---
     radia_cz = [
         {"nazov": "Rádio Kiss", "url": "https://n25a-eu.rcs.revma.com/asn0cmvb938uv", "logo": "https://i1.sndcdn.com/artworks-000055555247-hukx9y-t500x500.jpg"},
         {"nazov": "Rádio Impuls", "url": "http://icecast5.play.cz/impuls128.mp3", "logo": "https://www.impuls.cz/img/logo-impuls.png"},
         {"nazov": "Evropa 2", "url": "https://ice.actve.net/fm-evropa2-128", "logo": "https://www.evropa2.cz/wp-content/themes/evropa2/assets/img/logo.png"}
     ]
 
-    # --- 1. HLAVNÉ MENU ---
+    # --- HLAVNÉ MENU ---
     if not params:
         menu_items = [
             ("🌍 [B]ŠTÁTY[/B]", {'action': 'list_states'}),
@@ -140,12 +138,11 @@ def main():
             xbmcplugin.addDirectoryItem(handle, build_url(p), li, True)
         xbmcplugin.endOfDirectory(handle)
 
-    # --- 2. PODMENU: ŠTÁTY ---
+    # --- PODMENU: ŠTÁTY ---
     elif params.get('action') == 'list_states':
         states = [
             ("🇸🇰 [B]Slovenské Rádiá[/B]", {'country': 'sk'}, "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Flag_of_Slovakia.svg/1200px-Flag_of_Slovakia.svg.png"),
-            ("🇨🇿 [B]České Rádiá[/B]", {'country': 'cz'}, "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Flag_of_the_Czech_Republic.svg/1200px-Flag_of_the_Czech_Republic.svg.png"),
-            ("🇭🇺 [B]Maďarské Rádiá[/B]", {'action': 'msg', 'text': 'Maďarské rádiá - Pripravujeme sa'}, "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Flag_of_Hungary.svg/1200px-Flag_of_Hungary.svg.png")
+            ("🇨🇿 [B]České Rádiá[/B]", {'country': 'cz'}, "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Flag_of_the_Czech_Republic.svg/1200px-Flag_of_the_Czech_Republic.svg.png")
         ]
         for label, p, icon in states:
             li = xbmcgui.ListItem(label=label)
@@ -153,7 +150,7 @@ def main():
             xbmcplugin.addDirectoryItem(handle, build_url(p), li, True)
         xbmcplugin.endOfDirectory(handle)
 
-    # --- 3. PODMENU: OBLÚBENÉ ---
+    # --- PODMENU: OBLÚBENÉ ---
     elif params.get('action') == 'list_fav':
         favs = [
             ("⭐ [B]TOP Slovensko 10[/B]", {'action': 'top10_sk'}),
@@ -164,7 +161,7 @@ def main():
             xbmcplugin.addDirectoryItem(handle, build_url(p), li, True)
         xbmcplugin.endOfDirectory(handle)
 
-    # --- 4. FUNKCIA: VYHĽADÁVANIE ---
+    # --- FUNKCIA: VYHĽADÁVANIE ---
     elif params.get('action') == 'search':
         kb = xbmcgui.Dialog().input('Hľadať rádio', type=xbmcgui.INPUT_ALPHANUM)
         if kb:
@@ -174,4 +171,14 @@ def main():
             if vysledky:
                 zobraz_radia(handle, vysledky)
             else:
-                xbmcgui.Dialog().ok("Hľadanie", "Nenašli 
+                xbmcgui.Dialog().ok("Hľadanie", "Nenašli sa výsledky pre: " + kb)
+        xbmcplugin.endOfDirectory(handle)
+
+    # --- ZOBRAZENIE RÁDIÍ ---
+    elif params.get('country') == 'sk':
+        zobraz_radia(handle, radia_sk)
+
+    elif params.get('country') == 'cz':
+        zobraz_radia(handle, radia_cz)
+
+    elif params.get('action') == 'latest':
