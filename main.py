@@ -7,15 +7,21 @@ def build_url(query):
     return sys.argv[0] + '?' + urllib.parse.urlencode(query)
 
 def main():
+    # OPRAVA CHYBY DENNÍKA: Kontrola argumentov
+    if len(sys.argv) < 2:
+        return
+
     try:
         handle = int(sys.argv[1])
         arg_string = sys.argv[2][1:] if len(sys.argv[2]) > 1 else ""
         params = dict(urllib.parse.parse_qsl(arg_string))
-    except:
+    except (IndexError, ValueError):
         return
 
     # --- KOMPLETNÁ DATABÁZA SLOVENSKÝCH RÁDIÍ ---
     radia_sk = [
+        {"nazov": "V2Beat Radio", "url": "https://de1se01.v2beat.live/icecast.audio", "logo": "https://app.v2beat.com/images/viib-v2beat-logo-neon.jpg"},
+        {"nazov": "Záhorácke Rádio", "url": "http://live.zahorackeradio.sk:8080/zr128.mp3", "logo": "https://cdn.radia.sk/_radia/loga/app/zahoracke.webp?v=1"},
         {"nazov": "Top Rádio", "url": "https://solid1.streamupsolutions.com/proxy/vhhggmih/stream", "logo": "https://cdn.radia.sk/_radia/loga/coverflow/top.png"},
         {"nazov": "Trnavské Rádio", "url": "https://solid33.streamupsolutions.com/proxy/mujdmamw/trnavske", "logo": "https://myonlineradio.sk/public/uploads/radio_img/trnavske-radio/play_250_250.webp"},
         {"nazov": "Rádio SUB FM", "url": "https://stream.subfm.sk/subfm", "logo": "https://cdn.radia.sk/_radia/loga/coverflow/sub-fm.png"},
@@ -114,6 +120,7 @@ def main():
         {"nazov": "Rádio Vlna", "url": "http://stream.radiovlna.sk/vlna-hi.mp3", "logo": "https://myonlineradio.sk/public/uploads/radio_img/radio-vlna/play_250_250.webp"}
     ]
 
+    # --- KOMPLETNÁ DATABÁZA ČESKÝCH RÁDIÍ ---
     radia_cz = [
         {"nazov": "Rádio Kiss", "url": "https://n25a-eu.rcs.revma.com/asn0cmvb938uv", "logo": "https://i1.sndcdn.com/artworks-000055555247-hukx9y-t500x500.jpg"},
         {"nazov": "Rádio Impuls", "url": "http://icecast5.play.cz/impuls128.mp3", "logo": "https://www.impuls.cz/img/logo-impuls.png"},
@@ -167,18 +174,4 @@ def main():
             if vysledky:
                 zobraz_radia(handle, vysledky)
             else:
-                xbmcgui.Dialog().ok("Hľadanie", "Nenašli sa žiadne výsledky pre: " + kb)
-        xbmcplugin.endOfDirectory(handle)
-
-    # --- 5. ZOBRAZENIE RÁDIÍ ---
-    elif params.get('country') == 'sk':
-        zobraz_radia(handle, radia_sk)
-
-    elif params.get('country') == 'cz':
-        zobraz_radia(handle, radia_cz)
-
-    elif params.get('action') == 'latest':
-        zobraz_radia(handle, radia_sk[:5]) # Prvé v zozname (Top Rádio, Trnavské...)
-
-    elif params.get('action') == 'top10_sk':
-        zobraz_radia(handle, radi
+                xbmcgui.Dialog().ok("Hľadanie", "Nenašli 
