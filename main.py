@@ -125,6 +125,8 @@ def main():
     ]
 
     radia_cz = [
+        {"nazov": "Coop tip", "url": "http://ice4.abradio.cz/coop128.mp3", "logo": "https://www.radiomix.cz/wp-content/uploads/2022/06/coop-tip-radio-200x200.png"},
+        {"nazov": "Country Radio", "url": "https://stream.rcs.revma.com/h7rwanvb938uv", "logo": "https://myonlineradio.cz/public/uploads/radio_img/country-radio/fb_cover.jpg"},
         {"nazov": "ClubRadio", "url": "http://icecast2.play.cz/Clubradio.mp3", "logo": "http://api.play.cz/static/radio_logo/t200/clubradio.png"},
         {"nazov": "Color Music Radio", "url": "http://icecast6.play.cz/color192.mp3", "logo": "https://myonlineradio.cz/public/uploads/radio_img/color-music-radio/play_250_250.webp"},
         {"nazov": "Classic Praha", "url": "https://icecast8.play.cz/classic128.mp3", "logo": "https://static.mytuner.mobi/media/tvos_radios/153/classic-praha.a62cf508.png"},
