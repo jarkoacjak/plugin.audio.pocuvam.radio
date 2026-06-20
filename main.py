@@ -125,6 +125,8 @@ def main():
     ]
 
     radia_cz = [
+        {"nazov": "Crazy Rádio", "url": "http://live.topradio.cz:8000/crazy128", "logo": "http://hit-radio.cz/media/logo_6a043bd4bd019.jpg"},
+        {"nazov": "Československé rádio", "url": "http://live.topradio.cz:8000/csradio128", "logo": "https://www.radioexpert.net/radio-logo/czech/%C4%9Beskoslovensk%C3%A9-r%C3%A1dio-232-most-czech-320.jpg"},
         {"nazov": "Coop tip", "url": "http://ice4.abradio.cz/coop128.mp3", "logo": "https://www.radiomix.cz/wp-content/uploads/2022/06/coop-tip-radio-200x200.png"},
         {"nazov": "Country Radio", "url": "https://stream.rcs.revma.com/h7rwanvb938uv", "logo": "https://myonlineradio.cz/public/uploads/radio_img/country-radio/fb_cover.jpg"},
         {"nazov": "ClubRadio", "url": "http://icecast2.play.cz/Clubradio.mp3", "logo": "http://api.play.cz/static/radio_logo/t200/clubradio.png"},
