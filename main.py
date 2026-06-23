@@ -66,7 +66,7 @@ def main():
         {"nazov": "Rádio PaF", "url": "https://node-23.zeno.fm/92cv04cggfhvv", "logo": "https://cdn.radia.sk/_radia/loga/coverflow/paf.png"},
         {"nazov": "Rádio Logos", "url": "http://radioserver.online:8824/;", "logo": "https://cdn.radia.sk/_radia/loga/coverflow/logos.png"},
         {"nazov": "Rádio Metropolitan", "url": "https://mpc2.mediacp.eu:8214/stream", "logo": "https://myonlineradio.sk/public/uploads/radio_img/radio-metropolitan/play_250_250.webp"},
-        {"nazov": "Rádio Klub", "url": "https://listen.radioking.com/radio/860681/stream/930496", "logo": "https://d3t3ozftmdmh3i.cloudfront.net/staging/podcast_uploaded_nologo/44153165/44153165-1756027969361-fe65b85dada35.jpg"},
+        {"nazov": "Rádio Klub", "url": "https://listen.radioking.com/radio/892351/stream/962836", "logo": "https://d3t3ozftmdmh3i.cloudfront.net/staging/podcast_uploaded_nologo/44153165/44153165-1756027969361-fe65b85dada35.jpg"},
         {"nazov": "Rádio Litera", "url": "https://icecast.stv.livebox.sk/litera_128.mp3", "logo": "https://cdn.radia.sk/_radia/loga/coverflow/litera.png"},
         {"nazov": "Rádio KIKS - Big 90s", "url": "https://online.radiokiks.sk:8000/kiks_big90s.mp3", "logo": "https://cdn.radia.sk/_radia/loga/coverflow/kiks-big-90s.png"},
         {"nazov": "Rádio KIKS - Rock Music", "url": "https://online.radiokiks.sk:8000/kiks_rock.mp3", "logo": "https://cdn.radia.sk/_radia/loga/coverflow/kiks-rock-music.png"},
