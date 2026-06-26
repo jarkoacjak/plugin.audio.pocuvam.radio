@@ -134,7 +134,7 @@ def main():
         {"nazov": "ClubRadio", "url": "http://icecast2.play.cz/Clubradio.mp3", "logo": "http://api.play.cz/static/radio_logo/t200/clubradio.png"},
         {"nazov": "Color Music Radio", "url": "http://icecast6.play.cz/color192.mp3", "logo": "https://myonlineradio.cz/public/uploads/radio_img/color-music-radio/play_250_250.webp"},
         {"nazov": "Classic Praha", "url": "https://icecast8.play.cz/classic128.mp3", "logo": "https://static.mytuner.mobi/media/tvos_radios/153/classic-praha.a62cf508.png"},
-         {"nazov": "Calimeroclub", "url": "http://live.topradio.cz:8000/calimero192", "logo": "https://www.calimeroclub.eu/img/picture/231/logo-cali.jpg"},
+        {"nazov": "Calimeroclub", "url": "http://live.topradio.cz:8000/calimero192", "logo": "https://www.calimeroclub.eu/img/picture/231/logo-cali.jpg"},
         {"nazov": "Audio Kostel", "url": "https://evcast.mediacp.eu:1585/stream", "logo": "https://www.kostel.cz/logo.png"},
         {"nazov": "Bikers Radio Doupě", "url": "http://icecast7.play.cz/bikersradiodoupe128.mp3", "logo": "https://www.bikersradio.cz/images/logo.png"},
         {"nazov": "Alternative Times Radio", "url": "http://ice3.abradio.cz/alternative128.mp3", "logo": "https://radia.cz/media/images/0001/01/48cd28c2dab73f011e8e64dc0919ef57a7374883.png"},
@@ -177,11 +177,12 @@ def main():
 
         for radio in vybrane_radia:
             li = xbmcgui.ListItem(label=radio['nazov'])
-            # OPRAVA: Pridané správne mapovanie loga na 'icon', 'thumb' a 'poster' pre zoznamy staníc
+            
+            # Nastavenie loga pre zoznam staníc (vrátane malej ikony pri názve)
             li.setArt({
-                'icon': radio['logo'],
-                'thumb': radio['logo'], 
-                'poster': radio['logo']
+                'icon': radio['logo'],     # Malé logo vedľa textu
+                'thumb': radio['logo'],    # Náhľadový obrázok
+                'poster': radio['logo']    # Plagát
             })
             li.setInfo('music', {'title': radio['nazov']})
             li.setProperty('IsPlayable', 'true')
