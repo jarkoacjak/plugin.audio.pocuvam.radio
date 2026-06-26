@@ -149,7 +149,7 @@ def main():
 
     action = params.get('action')
 
-     if action is None:
+    if action is None:
         # HLAVNÉ MENU
         url_sk = build_url({'action': 'list', 'country': 'sk'})
         li_sk = xbmcgui.ListItem(label='[B][COLOR yellow]Hudba:[/COLOR] 🇸🇰 Slovenské rádiá[/B]')
