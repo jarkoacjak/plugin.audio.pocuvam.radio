@@ -11,8 +11,8 @@ def main():
     arg_string = sys.argv[2][1:]
     params = dict(urllib.parse.parse_qsl(arg_string))
 
-    # Nastavenie typu obsahu na hudobné skladby/stanice
-    xbmcplugin.setContent(handle, 'songs')
+    # Zmena na 'files' prinúti Kodi zobraziť malé ikony v každom skine
+    xbmcplugin.setContent(handle, 'files')
 
     # --- KOMPLETNÁ DATABÁZA RÁDIÍ ---
     radia_sk = [
@@ -124,7 +124,7 @@ def main():
     ]
 
     radia_cz = [
-        {"nazov": "Český Blatník", "url": "https://playerservices.streamtheworld.com/api/livestream-redirect/RADIO_BLANIKCZ_128.mp3", "logo": "https://radia.cz/media/default/0001/01/663721c3e5e911880a625e89abc926c8c882bce3.svg"},
+        {"nazov": "Český Blatník", "url": "https://playerservices.streamtheworld.com/api/livestream-redirect/RADIO_BLANIKCZ_128.mp3", "logo": "https://prazsky.blanik.cz/assets/images/logo.png"},
         {"nazov": "Rádio Impuls", "url": "http://icecast5.play.cz/impuls128.mp3", "logo": "https://myonlineradio.cz/public/uploads/radio_img/radio-impuls/play_250_250.webp"},
         {"nazov": "Crazy Rádio", "url": "http://live.topradio.cz:8000/crazy128", "logo": "http://hit-radio.cz/media/logo_6a043bd4bd019.jpg"},
         {"nazov": "Československé rádio", "url": "http://live.topradio.cz:8000/csradio128", "logo": "https://www.radioexpert.net/radio-logo/czech/%C4%9Beskoslovensk%C3%A9-r%C3%A1dio-232-most-czech-320.jpg"},
@@ -134,9 +134,6 @@ def main():
         {"nazov": "Color Music Radio", "url": "http://icecast6.play.cz/color192.mp3", "logo": "https://myonlineradio.cz/public/uploads/radio_img/color-music-radio/play_250_250.webp"},
         {"nazov": "Classic Praha", "url": "https://icecast8.play.cz/classic128.mp3", "logo": "https://static.mytuner.mobi/media/tvos_radios/153/classic-praha.a62cf508.png"},
         {"nazov": "Calimeroclub", "url": "http://live.topradio.cz:8000/calimero192", "logo": "https://www.calimeroclub.eu/img/picture/231/logo-cali.jpg"},
-        {"nazov": "Audio Kostel", "url": "https://evcast.mediacp.eu:1585/stream", "logo": "https://www.kostel.cz/logo.png"},
-        {"nazov": "Bikers Radio Doupě", "url": "http://icecast7.play.cz/bikersradiodoupe128.mp3", "logo": "https://www.bikersradio.cz/images/logo.png"},
-        {"nazov": "Alternative Times Radio", "url": "http://ice3.abradio.cz/alternative128.mp3", "logo": "https://radia.cz/media/images/0001/01/48cd28c2dab73f011e8e64dc0919ef57a7374883.png"},
         {"nazov": "Astra Rádio", "url": "https://astra.icecast.cz/", "logo": "https://myonlineradio.cz/public/uploads/radio_img/astra-radio/fb_cover.jpg"},
         {"nazov": "Rádio Kiss", "url": "https://n25a-eu.rcs.revma.com/asn0cmvb938uv", "logo": "https://www.kiss.cz/files/design/logo.png"},
         {"nazov": "Evropa 2", "url": "https://ice.actve.net/fm-evropa2-128", "logo": "https://www.evropa2.cz/wp-content/themes/evropa2/assets/img/logo.png"},
@@ -171,20 +168,21 @@ def main():
         country = params.get('country')
         vybrane_radia = radia_sk if country == 'sk' else radia_cz
 
-        # Vynútenie správneho zoradenia a vykreslenia ikon v zoznamoch
-        xbmcplugin.addSortMethod(handle, xbmcplugin.SORT_METHOD_NONE)
-
         for radio in vybrane_radia:
             li = xbmcgui.ListItem(label=radio['nazov'])
             
-            # OPRAVA PRE ČISTÝ A VYSOKOKVALITNÝ NÁHĽAD MALEJ IKONY
+            # Priamy zápis všetkých grafických metód pre stopercentné zobrazenie ikony
             li.setArt({
-                'thumb': radio['logo'],
                 'icon': radio['logo'],
-                'landscape': radio['logo']
+                'thumb': radio['logo'],
+                'poster': radio['logo'],
+                'banner': radio['logo']
             })
             
-            li.setInfo('music', {'title': radio['nazov']})
+            # Pridanie album art priamo do vlastností položky pre staršie skiny
+            li.setProperty('album_art', radio['logo'])
+            
+            li.setInfo('video', {'title': radio['nazov']})
             li.setProperty('IsPlayable', 'true')
             xbmcplugin.addDirectoryItem(handle, radio['url'], li, isFolder=False)
 
