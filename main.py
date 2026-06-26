@@ -4,7 +4,6 @@ import xbmcgui
 import xbmcplugin
 
 def build_url(query):
-    # Funkcia na správne generovanie odkazov v menu
     return sys.argv[0] + '?' + urllib.parse.urlencode(query)
 
 def main():
@@ -12,7 +11,7 @@ def main():
     arg_string = sys.argv[2][1:]
     params = dict(urllib.parse.parse_qsl(arg_string))
 
-    # Nastavenie typu obsahu na hudbu pre lepšie zobrazenie
+    # Nastavenie typu obsahu na hudobné skladby/stanice
     xbmcplugin.setContent(handle, 'songs')
 
     # --- KOMPLETNÁ DATABÁZA RÁDIÍ ---
@@ -147,12 +146,10 @@ def main():
         {"nazov": "Bus Radio", "url": "http://mpc1.mediacp.eu:8064/;", "logo": "https://static.mytuner.mobi/media/tvos_radios/ghscgzhhctun.png"}
     ]
 
-    # --- LOGIKA MENU ---
     action = params.get('action')
 
     if action is None:
-        # HLAVNÉ MENU DOPLNKU
-        # Ikona pre Slovensko
+        # HLAVNÉ MENU
         url_sk = build_url({'action': 'list', 'country': 'sk'})
         li_sk = xbmcgui.ListItem(label='[B][COLOR yellow]Hudba:[/COLOR] 🇸🇰 Slovenské rádiá[/B]')
         li_sk.setArt({
@@ -161,7 +158,6 @@ def main():
         })
         xbmcplugin.addDirectoryItem(handle, url_sk, li_sk, isFolder=True)
 
-        # Ikona pre Česko
         url_cz = build_url({'action': 'list', 'country': 'cz'})
         li_cz = xbmcgui.ListItem(label='[B][COLOR yellow]Hudba:[/COLOR] 🇨🇿 České rádiá[/B]')
         li_cz.setArt({
@@ -175,15 +171,19 @@ def main():
         country = params.get('country')
         vybrane_radia = radia_sk if country == 'sk' else radia_cz
 
+        # Vynútenie správneho zoradenia a vykreslenia ikon v zoznamoch
+        xbmcplugin.addSortMethod(handle, xbmcplugin.SORT_METHOD_NONE)
+
         for radio in vybrane_radia:
             li = xbmcgui.ListItem(label=radio['nazov'])
             
-            # Nastavenie loga pre zoznam staníc (vrátane malej ikony pri názve)
+            # OPRAVA PRE ČISTÝ A VYSOKOKVALITNÝ NÁHĽAD MALEJ IKONY
             li.setArt({
-                'icon': radio['logo'],     # Malé logo vedľa textu
-                'thumb': radio['logo'],    # Náhľadový obrázok
-                'poster': radio['logo']    # Plagát
+                'thumb': radio['logo'],
+                'icon': radio['logo'],
+                'landscape': radio['logo']
             })
+            
             li.setInfo('music', {'title': radio['nazov']})
             li.setProperty('IsPlayable', 'true')
             xbmcplugin.addDirectoryItem(handle, radio['url'], li, isFolder=False)
