@@ -4,6 +4,7 @@ import xbmcgui
 import xbmcplugin
 
 def build_url(query):
+    # Funkcia na správne generovanie odkazov v menu
     return sys.argv[0] + '?' + urllib.parse.urlencode(query)
 
 def main():
@@ -11,10 +12,10 @@ def main():
     arg_string = sys.argv[2][1:]
     params = dict(urllib.parse.parse_qsl(arg_string))
 
-    # Nastavenie obsahu na súbory pre maximálnu kompatibilitu s ikonami
+    # Zmena na 'files' prinúti Kodi skryť predvolené štvorčeky a načítať reálne logá
     xbmcplugin.setContent(handle, 'files')
 
-    # --- KOMPLETNÁ DATABÁZA RÁDIÍ S NOVÝMI STABILNÝMI LOGAMI ---
+    # --- KOMPLETNÁ DATABÁZA RÁDIÍ S FUNKČNÝMI LOGAMI ---
     radia_sk = [
         {"nazov": "Moveit Rádio", "url": "https://play.radiosebastian.eu/listen/moveitradiosk/radio.mp3", "logo": "https://static.mytuner.mobi/media/tvos_radios/play_250_250.webp"},
         {"nazov": "Fun Rádio Leto", "url": "https://stream.funradio.sk:8000/summer128.mp3", "logo": "https://pub.funradio.sk/media/logo/funradio_logo_leto.png"},
@@ -124,7 +125,7 @@ def main():
     ]
 
     radia_cz = [
-        {"nazov": "Český Blanník", "url": "https://playerservices.streamtheworld.com/api/livestream-redirect/RADIO_BLANIKCZ_128.mp3", "logo": "https://prazsky.blanik.cz/assets/images/logo.png"},
+        {"nazov": "Český Blaník", "url": "https://playerservices.streamtheworld.com/api/livestream-redirect/RADIO_BLANIKCZ_128.mp3", "logo": "https://prazsky.blanik.cz/assets/images/logo.png"},
         {"nazov": "Rádio Impuls", "url": "http://icecast5.play.cz/impuls128.mp3", "logo": "https://www.impuls.cz/images/logo.png"},
         {"nazov": "Crazy Rádio", "url": "http://live.topradio.cz:8000/crazy128", "logo": "http://hit-radio.cz/media/logo_6a043bd4bd019.jpg"},
         {"nazov": "Československé rádio", "url": "http://live.topradio.cz:8000/csradio128", "logo": "https://www.radioexpert.net/radio-logo/czech/%C4%9Beskoslovensk%C3%A9-r%C3%A1dio-232-most-czech-320.jpg"},
@@ -148,7 +149,7 @@ def main():
 
     action = params.get('action')
 
-    if action is None:
+     if action is None:
         # HLAVNÉ MENU
         url_sk = build_url({'action': 'list', 'country': 'sk'})
         li_sk = xbmcgui.ListItem(label='[B][COLOR yellow]Hudba:[/COLOR] 🇸🇰 Slovenské rádiá[/B]')
