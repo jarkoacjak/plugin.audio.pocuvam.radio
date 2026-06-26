@@ -66,7 +66,7 @@ def main():
         {"nazov": "Rádio PaF", "url": "https://node-23.zeno.fm/92cv04cggfhvv", "logo": "https://cdn.radia.sk/_radia/loga/coverflow/paf.png"},
         {"nazov": "Rádio Logos", "url": "http://radioserver.online:8824/;", "logo": "https://cdn.radia.sk/_radia/loga/coverflow/logos.png"},
         {"nazov": "Rádio Metropolitan", "url": "https://mpc2.mediacp.eu:8214/stream", "logo": "https://myonlineradio.sk/public/uploads/radio_img/radio-metropolitan/play_250_250.webp"},
-        {"nazov": "Rádio Klub", "url": "https://listen.radioking.com/radio/892351/stream/962836", "logo": "https://d3t3ozftmdmh3i.cloudfront.net/staging/podcast_uploaded_nologo/44153165/44153165-1756027969361-fe65b85dada35.jpg"},
+        {"nazov": "Rádio Klub", "url": "https://listen.radioking.com/radio/860681/stream/930496", "logo": "https://d3t3ozftmdmh3i.cloudfront.net/staging/podcast_uploaded_nologo/44153165/44153165-1756027969361-fe65b85dada35.jpg"},
         {"nazov": "Rádio Litera", "url": "https://icecast.stv.livebox.sk/litera_128.mp3", "logo": "https://cdn.radia.sk/_radia/loga/coverflow/litera.png"},
         {"nazov": "Rádio KIKS - Big 90s", "url": "https://online.radiokiks.sk:8000/kiks_big90s.mp3", "logo": "https://cdn.radia.sk/_radia/loga/coverflow/kiks-big-90s.png"},
         {"nazov": "Rádio KIKS - Rock Music", "url": "https://online.radiokiks.sk:8000/kiks_rock.mp3", "logo": "https://cdn.radia.sk/_radia/loga/coverflow/kiks-rock-music.png"},
@@ -125,6 +125,8 @@ def main():
     ]
 
     radia_cz = [
+        {"nazov": "Český Blatník", "url": "https://playerservices.streamtheworld.com/api/livestream-redirect/RADIO_BLANIKCZ_128.mp3", "logo": "https://radia.cz/media/default/0001/01/663721c3e5e911880a625e89abc926c8c882bce3.svg"},
+        {"nazov": "Rádio Impuls", "url": "http://icecast5.play.cz/impuls128.mp3", "logo": "https://myonlineradio.cz/public/uploads/radio_img/radio-impuls/play_250_250.webp"},
         {"nazov": "Crazy Rádio", "url": "http://live.topradio.cz:8000/crazy128", "logo": "http://hit-radio.cz/media/logo_6a043bd4bd019.jpg"},
         {"nazov": "Československé rádio", "url": "http://live.topradio.cz:8000/csradio128", "logo": "https://www.radioexpert.net/radio-logo/czech/%C4%9Beskoslovensk%C3%A9-r%C3%A1dio-232-most-czech-320.jpg"},
         {"nazov": "Coop tip", "url": "http://ice4.abradio.cz/coop128.mp3", "logo": "https://www.radiomix.cz/wp-content/uploads/2022/06/coop-tip-radio-200x200.png"},
@@ -132,13 +134,12 @@ def main():
         {"nazov": "ClubRadio", "url": "http://icecast2.play.cz/Clubradio.mp3", "logo": "http://api.play.cz/static/radio_logo/t200/clubradio.png"},
         {"nazov": "Color Music Radio", "url": "http://icecast6.play.cz/color192.mp3", "logo": "https://myonlineradio.cz/public/uploads/radio_img/color-music-radio/play_250_250.webp"},
         {"nazov": "Classic Praha", "url": "https://icecast8.play.cz/classic128.mp3", "logo": "https://static.mytuner.mobi/media/tvos_radios/153/classic-praha.a62cf508.png"},
-        {"nazov": "Calimeroclub", "url": "http://live.topradio.cz:8000/calimero192", "logo": "https://www.calimeroclub.eu/img/picture/231/logo-cali.jpg"},
+         {"nazov": "Calimeroclub", "url": "http://live.topradio.cz:8000/calimero192", "logo": "https://www.calimeroclub.eu/img/picture/231/logo-cali.jpg"},
         {"nazov": "Audio Kostel", "url": "https://evcast.mediacp.eu:1585/stream", "logo": "https://www.kostel.cz/logo.png"},
         {"nazov": "Bikers Radio Doupě", "url": "http://icecast7.play.cz/bikersradiodoupe128.mp3", "logo": "https://www.bikersradio.cz/images/logo.png"},
         {"nazov": "Alternative Times Radio", "url": "http://ice3.abradio.cz/alternative128.mp3", "logo": "https://radia.cz/media/images/0001/01/48cd28c2dab73f011e8e64dc0919ef57a7374883.png"},
         {"nazov": "Astra Rádio", "url": "https://astra.icecast.cz/", "logo": "https://myonlineradio.cz/public/uploads/radio_img/astra-radio/fb_cover.jpg"},
         {"nazov": "Rádio Kiss", "url": "https://n25a-eu.rcs.revma.com/asn0cmvb938uv", "logo": "https://www.kiss.cz/files/design/logo.png"},
-        {"nazov": "Rádio Impuls", "url": "http://icecast5.play.cz/impuls128.mp3", "logo": "https://www.impuls.cz/img/logo-impuls.png"},
         {"nazov": "Evropa 2", "url": "https://ice.actve.net/fm-evropa2-128", "logo": "https://www.evropa2.cz/wp-content/themes/evropa2/assets/img/logo.png"},
         {"nazov": "BlackFM Radio", "url": "http://icecast2.play.cz/blackfm-radio-192.mp3", "logo": "https://blackfm.cz/image/freestyle/blackfm_logo_www.jpg"},
         {"nazov": "Blue Radio", "url": "https://stream.blueradio.cz/live", "logo": "https://stream.blueradio.cz/img/logo.png"},
@@ -176,9 +177,10 @@ def main():
 
         for radio in vybrane_radia:
             li = xbmcgui.ListItem(label=radio['nazov'])
+            # OPRAVA: Pridané správne mapovanie loga na 'icon', 'thumb' a 'poster' pre zoznamy staníc
             li.setArt({
+                'icon': radio['logo'],
                 'thumb': radio['logo'], 
-                'icon': radio['logo'], 
                 'poster': radio['logo']
             })
             li.setInfo('music', {'title': radio['nazov']})
