@@ -1,198 +1,183 @@
+# -*- coding: utf-8 -*-
 import sys
 import urllib.parse
 import xbmcgui
 import xbmcplugin
 
-def build_url(query):
-    return sys.argv[0] + '?' + urllib.parse.urlencode(query)
+# Zápis URL argumentov pre Kodi
+HANDLE = int(sys.argv[1])
+BASE_URL = sys.argv[0]
 
-def main():
-    handle = int(sys.argv[1])
-    arg_string = sys.argv[2][1:]
-    params = dict(urllib.parse.parse_qsl(arg_string))
+# Tvoj zoznam slovenských rádií
+SLOVENSKE_RADIA = [
+    {"nazov": "Moveit Rádio", "url": "https://play.radiosebastian.eu/listen/moveitradiosk/radio.mp3", "logo": "https://myonlineradio.sk/public/uploads/radio_img/moveit-radio/play_250_250.webp"},
+    {"nazov": "Fun Rádio Leto", "url": "https://stream.funradio.sk:8000/summer128.mp3", "logo": "https://cdn.radia.sk/_radia/loga/app/fun-letne-hity.webp?v=11"},
+    {"nazov": "Fun Rádio Mileniálky", "url": "https://stream.funradio.sk:8000/milenialky128.mp3", "logo": "https://cdn.radia.sk/_radia/loga/coverflow/fun-milenialky.png"},
+    {"nazov": "Fun Rádio Dance", "url": "http://stream.funradio.sk:8000/dance128.mp3", "logo": "https://cdn.radia.sk/_radia/loga/coverflow/fun-dance.png"},
+    {"nazov": "Fun Rádio Chill", "url": "https://stream.funradio.sk/chill128.mp3", "logo": "https://cdn.radia.sk/_radia/loga/coverflow/fun-chill.png"},
+    {"nazov": "Fun Rádio 80's - 90's", "url": "http://stream.funradio.sk:8000/80-90-128.mp3", "logo": "https://cdn.radia.sk/_radia/loga/nadpis/fun-80-90-roky.webp?v=1"},
+    {"nazov": "Fun Rádio CZ - SK", "url": "http://stream.funradio.sk:8000/cs128.mp3", "logo": "https://cdn.radia.sk/_radia/loga/coverflow/fun-cz-sk.png"},
+    {"nazov": "V2Beat Radio", "url": "https://de1se01.v2beat.live/icecast.audio", "logo": "https://app.v2beat.com/images/viib-v2beat-logo-neon.jpg"},
+    {"nazov": "Záhorácke Rádio", "url": "http://live.zahorackeradio.sk:8080/zr128.mp3", "logo": "https://cdn.radia.sk/_radia/loga/app/zahoracke.webp?v=1"},
+    {"nazov": "Top Rádio", "url": "https://solid1.streamupsolutions.com/proxy/vhhggmih/stream", "logo": "https://cdn.radia.sk/_radia/loga/coverflow/top.png"},
+    {"nazov": "Trnavské Rádio", "url": "https://solid33.streamupsolutions.com/proxy/mujdmamw/trnavske", "logo": "https://myonlineradio.sk/public/uploads/radio_img/trnavske-radio/play_250_250.webp"},
+    {"nazov": "Rádio SUB FM", "url": "https://stream.subfm.sk/subfm", "logo": "https://cdn.radia.sk/_radia/loga/coverflow/sub-fm.png"},
+    {"nazov": "Rádio Ticho", "url": "https://solid1.streamupsolutions.com/proxy/rpiipoer/tiche", "logo": "https://cdn.radia.sk/_radia/loga/coverflow/tiche.png"},
+    {"nazov": "Sky Rádio", "url": "http://stream.skyradio.sk:8000/sky128", "logo": "https://cdn.radia.sk/_radia/loga/coverflow/sky.png"},
+    {"nazov": "Rádio Slobodný Vysielač", "url": "https://vysielanie.online/radio/8020/SV128.mp3", "logo": "https://myonlineradio.sk/public/uploads/radio_img/slobodny-vysielac/play_250_250.webp"},
+    {"nazov": "Rádio Zábava", "url": "https://stream.zeno.fm/eyac00cx1nhvv", "logo": "https://cdn.radia.sk/_radia/loga/app/zabava.webp?v=2"},
+    {"nazov": "Rádio Rusyn FM", "url": "https://stream.rusyn.fm/rusyny.mp3", "logo": "https://myonlineradio.sk/public/uploads/radio_img/rusyn-fm/play_250_250.webp"},
+    {"nazov": "Rádio X - Metal X", "url": "https://stream.radiox.sk:8443/metal.mp3", "logo": "https://myonlineradio.sk/public/uploads/radio_img/radio-x/play_250_250.webp"},
+    {"nazov": "Rádio X - Oldies X", "url": "https://stream.radiox.sk:8443/oldies.mp3", "logo": "https://myonlineradio.sk/public/uploads/radio_img/radio-x/play_250_250.webp"},
+    {"nazov": "Rádio X - Folklore X", "url": "https://stream.radiox.sk:8443/ludovky.mp3", "logo": "https://myonlineradio.sk/public/uploads/radio_img/radio-x/play_250_250.webp"},
+    {"nazov": "Rádio X - Chillout X", "url": "https://stream.radiox.sk:8443/chillout.mp3", "logo": "https://myonlineradio.sk/public/uploads/radio_img/radio-x/play_250_250.webp"},
+    {"nazov": "Rádio X - Dance X", "url": "https://stream.radiox.sk:8443/dance.mp3", "logo": "https://myonlineradio.sk/public/uploads/radio_img/radio-x/play_250_250.webp"},
+    {"nazov": "Rádio X - DNB X", "url": "https://stream.radiox.sk:8443/dnb.mp3", "logo": "https://myonlineradio.sk/public/uploads/radio_img/radio-x/play_250_250.webp"},
+    {"nazov": "Rádio X", "url": "https://stream.radiox.sk:8443/radiox_256.mp3", "logo": "https://myonlineradio.sk/public/uploads/radio_img/radio-x/play_250_250.webp"},
+    {"nazov": "Rádio X - Alternative X", "url": "https://stream.radiox.sk:8443/alternative.mp3", "logo": "https://myonlineradio.sk/public/uploads/radio_img/radio-x/play_250_250.webp"},
+    {"nazov": "Rádio Vlna - Classic Rock", "url": "https://stream.radiovlna.sk/rock-hi.mp3", "logo": "https://cdn.radia.sk/_radia/loga/coverflow/vlna-classic-rock.png"},
+    {"nazov": "Rádio Vlna - Oldies Párty", "url": "https://stream.radiovlna.sk:8000/party-hi.mp3", "logo": "https://cdn.radia.sk/_radia/loga/coverflow/vlna-oldies-party.png"},
+    {"nazov": "Rádio Vlna - 60's & 70s", "url": "https://stream.radiovlna.sk/gold-hi.mp3", "logo": "https://cdn.radia.sk/_radia/loga/coverflow/vlna-60s-70s.png"},
+    {"nazov": "Rádio Vlna - Balady", "url": "https://stream.radiovlna.sk/balady-hi.mp3", "logo": "https://cdn.radia.sk/_radia/loga/app/vlna-balady.webp?v=1"},
+    {"nazov": "Rádio v Nitre", "url": "http://195.210.28.150:8932/radiovnitre_live.mp3", "logo": "https://cdn.radia.sk/_radia/loga/coverflow/radio-v-nitre.png"},
+    {"nazov": "Rádio Vega", "url": "https://stream.sepia.sk:8000/vega128.mp3", "logo": "https://cdn.radia.sk/_radia/loga/coverflow/vega.png"},
+    {"nazov": "Rádio Tlis", "url": "https://stream.tlis.sk/tlis.mp3", "logo": "https://cdn.radia.sk/_radia/loga/coverflow/tlis.png"},
+    {"nazov": "Rádio Topoľčany", "url": "http://80.242.44.249:8000/;", "logo": "https://cdn.radia.sk/_radia/loga/coverflow/topolcany.png"},
+    {"nazov": "Radio Slovakia International", "url": "https://icecast.stv.livebox.sk/rsi_128.mp3", "logo": "https://cdn.radia.sk/_radia/loga/coverflow/slovakia-international.png"},
+    {"nazov": "Rádio Šírava", "url": "http://stream.sepia.sk:8000/radiosirava.mp3", "logo": "https://cdn.radia.sk/_radia/loga/app/sirava.webp?v=2"},
+    {"nazov": "Rádio Rock SV", "url": "https://s2.myradiostream.com/:4870/listen.mp3", "logo": "https://cdn.radia.sk/_radia/loga/coverflow/rock-sv.png"},
+    {"nazov": "Rádio Sity", "url": "https://radiosity.online:8000/aac", "logo": "https://cdn.radia.sk/_radia/loga/coverflow/sity.png"},
+    {"nazov": "Rádio Pyramída", "url": "https://icecast.stv.livebox.sk/pyramida_128.mp3", "logo": "https://www.radiomix.sk/wp-content/uploads/2024/01/radio-pyramida-560x560.png"},
+    {"nazov": "Rádio Rebeca", "url": "https://mpc2.mediacp.eu:8200/rebecaweb", "logo": "https://cdn.radia.sk/_radia/loga/app/rebeca.webp?v=2"},
+    {"nazov": "Rádio Pohoda 2", "url": "http://mpc1.mediacp.eu:18111/stream", "logo": "https://cdn.radia.sk/_radia/loga/coverflow/pohoda2.png"},
+    {"nazov": "Rádio Pokoj", "url": "http://radioserver.online:8822/;", "logo": "https://cdn.radia.sk/_radia/loga/app/pokoj.webp?v=2"},
+    {"nazov": "Rádio Piešťany", "url": "https://solid33.streamupsolutions.com/proxy/gktiemqb/stream", "logo": "https://myonlineradio.sk/public/uploads/radio_img/radio-piestany/play_250_250.webp"},
+    {"nazov": "Rádio Pohoda", "url": "https://audio.radiopohoda.com:8000/stream", "logo": "https://myonlineradio.sk/public/uploads/radio_img/radio-pohoda/fb_cover.jpg"},
+    {"nazov": "Rádio Paráda", "url": "https://extra.mediacp.eu/stream/RadioParada,o.z.", "logo": "https://www.radioparada.sk/wp-content/uploads/2021/12/LOGO-PARADA-NEW-1024x1024.png"},
+    {"nazov": "Rádio Patria", "url": "https://icecast.stv.livebox.sk/patria_128.mp3", "logo": "https://upload.wikimedia.org/wikipedia/commons/8/85/R%C3%A1dio_PATRIA_LOGO.jpg"},
+    {"nazov": "Rádio Modra", "url": "http://185.98.208.12:8000/;", "logo": "https://cdn.radia.sk/_radia/loga/coverflow/modra.png"},
+    {"nazov": "Rádio PaF", "url": "https://node-23.zeno.fm/92cv04cggfhvv", "logo": "https://cdn.radia.sk/_radia/loga/coverflow/paf.png"},
+    {"nazov": "Rádio Logos", "url": "http://radioserver.online:8824/;", "logo": "https://cdn.radia.sk/_radia/loga/coverflow/logos.png"},
+    {"nazov": "Rádio Metropolitan", "url": "https://mpc2.mediacp.eu:8214/stream", "logo": "https://myonlineradio.sk/public/uploads/radio_img/radio-metropolitan/play_250_250.webp"},
+    {"nazov": "Rádio Klub", "url": "https://listen.radioking.com/radio/860681/stream/930496", "logo": "https://d3t3ozftmdmh3i.cloudfront.net/staging/podcast_uploaded_nologo/44153165/44153165-1756027969361-fe65b85dada35.jpg"},
+    {"nazov": "Rádio Litera", "url": "https://icecast.stv.livebox.sk/litera_128.mp3", "logo": "https://cdn.radia.sk/_radia/loga/coverflow/litera.png"},
+    {"nazov": "Rádio KIKS - Big 90s", "url": "https://online.radiokiks.sk:8000/kiks_big90s.mp3", "logo": "https://cdn.radia.sk/_radia/loga/coverflow/kiks-big-90s.png"},
+    {"nazov": "Rádio KIKS - Rock Music", "url": "https://online.radiokiks.sk:8000/kiks_rock.mp3", "logo": "https://cdn.radia.sk/_radia/loga/coverflow/kiks-rock-music.png"},
+    {"nazov": "Rádio KIKS", "url": "https://online.radiokiks.sk:8000/kiks_hq.mp3", "logo": "https://cdn.radia.sk/_radia/loga/app/kiks.webp?v=1"},
+    {"nazov": "Rádio KIKS - Big 80s", "url": "https://online.radiokiks.sk:8000/kiks_big80s.mp3", "logo": "https://radiokiks.net/wp-content/uploads/2024/08/Logo_BIG_80.png"},
+    {"nazov": "Rádio Jemné Chillout", "url": "https://stream.bauermedia.sk/chillout-hi.mp3", "logo": "https://cdn.radia.sk/_radia/loga/coverflow/jemne-chillout.png"},
+    {"nazov": "Rádio Junior", "url": "https://icecast.stv.livebox.sk/junior_128.mp3", "logo": "https://myonlineradio.sk/public/uploads/radio_img/radio-junior/fb_cover.jpg"},
+    {"nazov": "Rádio Janko Hraško", "url": "http://78.24.9.110:31088/;", "logo": "https://myonlineradio.sk/public/uploads/radio_img/radio-janko-hrasko/play_250_250.webp"},
+    {"nazov": "Rádio Jazz", "url": "http://stream.sepia.sk:8000/jazz192.mp3", "logo": "http://radiojazz.sk/image/logo.png"},
+    {"nazov": "Rádio FanWaves", "url": "https://stream.zeno.fm/gtkbdehhekftv", "logo": "https://images.zeno.fm/ZtUvkDMtkuf8ykYmi9VmIi3zRsaaaKixAoEEe6F5Tzk/rs:fill:288:288/g:ce:0:0/aHR0cHM6Ly9wcm94eS56ZW5vLmZtL2NvbnRlbnQvc3RhdGlvbnMvYzFkZDQwMDYtMjJkNC00NjYyLWIyZGMtZjNjNTVlYmY2YWVlL2ltYWdlLz91PTE3NTUzNjM0NjEwMDA.webp"},
+    {"nazov": "Rádio Folk", "url": "https://mpc1.mediacp.eu/stream/demo2", "logo": "https://www.radiofolk.sk/wp-content/uploads/2021/08/cropped-cropped-cropped-Logo-pre-web.png"},
+    {"nazov": "Rádio Biblia", "url": "http://radiobiblia.online:8000/stream.ogg", "logo": "https://myonlineradio.sk/public/uploads/radio_img/radio-biblia/play_250_250.webp"},
+    {"nazov": "Rádio Extra", "url": "http://live.topradio.cz:8000/extra192", "logo": "https://myonlineradio.sk/public/uploads/radio_img/radio-extra/fb_cover.jpg"},
+    {"nazov": "Rádio Beta Česko a Slovenské Hity", "url": "http://109.71.67.102:8000/beta_cspop.mp3", "logo": "https://myonlineradio.sk/public/uploads/radio_img/radio-beta/play_250_250.webp"},
+    {"nazov": "Rádio Beta 80'S a 90'S", "url": "http://109.71.67.102:8000/beta_80a90.mp3", "logo": "https://myonlineradio.sk/public/uploads/radio_img/radio-beta/play_250_250.webp"},
+    {"nazov": "Rádio Beta Hráme jubilantom", "url": "http://109.71.67.102:8000/beta_jubilanti.mp3", "logo": "https://myonlineradio.sk/public/uploads/radio_img/radio-beta/play_250_250.webp"},
+    {"nazov": "Rádio Bela", "url": "http://65.109.81.84:8855/live", "logo": "https://cdn.radia.sk/_radia/loga/coverflow/bela.png"},
+    {"nazov": "Rádio Best FM", "url": "https://stream3.bestfm.sk:8000/160.aac", "logo": "https://bestfm.sk/wp-content/uploads/2021/09/logo_transparent.png"},
+    {"nazov": "Rádio Basavel", "url": "https://stream.zeno.fm/6gd9c6yn4nhvv", "logo": "https://cdn.radia.sk/_radia/loga/coverflow/basavel.png"},
+    {"nazov": "Rádio Aetter", "url": "http://stream.aetter.sk:8000/aetter", "logo": "https://cdn.radia.sk/_radia/loga/app/aetter.webp?v=1"},
+    {"nazov": "Rádio 7", "url": "https://play.radio7.sk/128", "logo": "https://cdn.radia.sk/_radia/loga/coverflow/7.png"},
+    {"nazov": "Rádio 9", "url": "http://147.232.191.167:8000/high.mp3", "logo": "https://cdn.radia.sk/_radia/loga/coverflow/9.png"},
+    {"nazov": "PARTY RADIO", "url": "https://mpc1.mediacp.eu/stream/partyradio", "logo": "http://files.exoweb.eu/13/40/13404079-0cdd-42be-88cd-e832e3e5542c.jpeg"},
+    {"nazov": "Rádio Viva", "url": "http://stream.sepia.sk:8000/viva320.mp3", "logo": "https://myonlineradio.sk/public/uploads/radio_img/radio-viva/play_250_250.webp"},
+    {"nazov": "Fresh Rádio", "url": "https://icecast2.radionet.sk/freshradio.sk", "logo": "https://myonlineradio.sk/public/uploads/radio_img/fresh-radio/play_250_250.webp"},
+    {"nazov": "Rádio Rock", "url": "https://stream.bauermedia.sk/rock-hi.mp3", "logo": "https://radiorock.sk/intro-v2.png"},
+    {"nazov": "Rádio Maria Slovakia", "url": "https://dreamsiteradiocp5.com/proxy/radiomariaslomp3?mp=/stream.mp3", "logo": "https://myonlineradio.sk/public/uploads/radio_img/radio-maria-slovensko/play_250_250.webp"},
+    {"nazov": "Rádio Lumen", "url": "https://audio.lumen.sk/live128.mp3", "logo": "https://www.radia.sk/_radia/loga/coverflow/lumen.png"},
+    {"nazov": "Na vlne Novohradu", "url": "https://radioserver.online/proxy/navlnenovohradu/novohradHQ.mp3", "logo": "https://cdn.radia.sk/_radia/loga/app/navlnenovohradu.webp"},
+    {"nazov": "Na vlne Liptova", "url": "http://radioserver.online:8009/hq.mp3", "logo": "https://www.radia.sk/_radia/loga/coverflow/na-vlne-liptova.png"},
+    {"nazov": "Mirjam Radio", "url": "https://dreamsiteradiocp5.com/proxy/rmslo?mp=/stream", "logo": "https://www.radia.sk/_radia/loga/app/mirjam.webp?v=1"},
+    {"nazov": "METALSCENA netRADIO", "url": "https://listen.radioking.com/radio/263218/stream/308365", "logo": "https://www.radia.sk/_radia/loga/coverflow/metalscena.png"},
+    {"nazov": "Mars Dance Rádio", "url": "https://stream.zenolive.com/683gf5xrxfeuv?1686916511841", "logo": "https://www.radia.sk/_radia/loga/app/mars-dance.webp?v=2"},
+    {"nazov": "HITRÁDIO SLOVAKIA", "url": "https://hitradioslovakia.stream.laut.fm/hitradioslovakia", "logo": "https://myonlineradio.sk/public/uploads/radio_img/hitradio-slovakia/play_250_250.webp"},
+    {"nazov": "BB FM", "url": "http://stream.bbfm.sk:8000/bbfm128.mp3", "logo": "https://myonlineradio.sk/public/uploads/radio_img/bb-fm-radio/play_250_250.webp"},
+    {"nazov": "Rádio Regina - Západ", "url": "https://icecast.stv.livebox.sk/regina-ba_128.mp3", "logo": "https://www.radia.sk/_radia/loga/coverflow/regina-zapad.png"},
+    {"nazov": "Rádio Regina - Stred", "url": "https://icecast.stv.livebox.sk/regina-bb_128.mp3", "logo": "https://www.radia.sk/_radia/loga/app/regina-stred.webp?v=2"},
+    {"nazov": "Rádio Regina - Východ", "url": "https://icecast.stv.livebox.sk/regina-ke_128.mp3", "logo": "https://www.radia.sk/_radia/loga/coverflow/regina-vychod.png"},
+    {"nazov": "Rádio Devín", "url": "https://icecast.stv.livebox.sk/devin_128.mp3", "logo": "https://www.radia.sk/_radia/loga/coverflow/devin.png"},
+    {"nazov": "Europa 2", "url": "https://stream.bauermedia.sk/europa2-hi.mp3", "logo": "https://www.radia.sk/_radia/loga/coverflow/europa2.png"},
+    {"nazov": "Dobré Rádio", "url": "https://stream.dobreradio.sk/dobreradio.mp3", "logo": "https://www.radia.sk/_radia/loga/coverflow/dobre.png"},
+    {"nazov": "Rádio InfoVojna", "url": "https://stream1.infovojna.com:8000/live", "logo": "https://topradio.sk/_next/image?url=%2Fimages%2Finfovojna.jpg&w=640&q=75"},
+    {"nazov": "Rádio_FM", "url": "https://icecast.stv.livebox.sk/fm_128.mp3", "logo": "https://www.radia.sk/_radia/loga/coverflow/fm.png"},
+    {"nazov": "Rádio Dychovka", "url": "https://epanel.mediacp.eu:7661/stream", "logo": "https://www.radia.sk/_radia/loga/app/dychovka.webp?v=1"},
+    {"nazov": "Rádio Košice", "url": "http://stream.ecce.sk:8000/radiokosice-128.mp3", "logo": "https://data.tvkosice.sk/images/cm/1000x0xresize/r/a/d/radiokosice/8e/fe/8efe9b31-bd08-4f5d-9168-fa656184fdd2.jpg"},
+    {"nazov": "FIT Family RADIO", "url": "http://solid67.streamupsolutions.com:8052/;", "logo": "https://www.radia.sk/_radia/loga/app/fit-family.webp?v=1"},
+    {"nazov": "Rádio WOW", "url": "https://radioserver.online:9816/radiowow.mp3", "logo": "https://www.radia.sk/_radia/loga/coverflow/wow.png"},
+    {"nazov": "Rádio Slovensko", "url": "https://icecast.stv.livebox.sk/slovensko_128.mp3", "logo": "https://myonlineradio.sk/public/uploads/radio_img/radio-slovensko/play_250_250.webp"},
+    {"nazov": "Detské Rádio", "url": "https://stream.21.sk/detskeradio-192.mp3", "logo": "https://data.tvkosice.sk/images/cm/1000x0xresize/r/a/d/radiokosice/08/80/0880daa2-a629-4ce0-9bf9-ab7765572c2f.jpg"},
+    {"nazov": "Rádio Frontinus", "url": "http://stream.frontinus.sk:8000/frontinus128.mp3", "logo": "https://myonlineradio.sk/public/uploads/radio_img/radio-frontinus/play_250_250.webp"},
+    {"nazov": "Rádio Expres", "url": "https://stream.expres.sk/128.mp3", "logo": "https://www.radia.sk/_radia/loga/coverflow/expres.png"},
+    {"nazov": "Rádio Melody", "url": "https://stream.bauermedia.sk/melody-hi.mp3", "logo": "https://www.radiomelody.sk/cover.png?f=raw"},
+    {"nazov": "Rádio Beta", "url": "http://109.71.67.102:8000/beta_live_high.mp3", "logo": "https://myonlineradio.sk/public/uploads/radio_img/radio-beta/play_250_250.webp"},
+    {"nazov": "Fun Rádio", "url": "https://stream.funradio.sk:8000/fun128.mp3", "logo": "https://myonlineradio.sk/public/uploads/radio_img/fun-radio/play_250_250.webp"},
+    {"nazov": "Rádio Vlna", "url": "http://stream.radiovlna.sk/vlna-hi.mp3", "logo": "https://myonlineradio.sk/public/uploads/radio_img/radio-vlna/play_250_250.webp"}
+]
 
-    # Nastavenie na 'songs' zapne plnú podporu hudobného obsahu
-    xbmcplugin.setContent(handle, 'songs')
+def hlavne_menu():
+    """Zobrazí základné menu: Slovenské a České rádiá"""
+    url_sk = f"{BASE_URL}?action=slovenske"
+    li_sk = xbmcgui.ListItem(label="Slovenské Rádiá")
+    li_sk.setArt({'icon': 'DefaultFolder.png'})
+    xbmcplugin.addDirectoryItem(handle=HANDLE, url=url_sk, listitem=li_sk, isFolder=True)
 
-    # --- DATABÁZA RÁDIÍ ---
-    radia_sk = [
-        {"nazov": "Moveit Rádio", "url": "https://play.radiosebastian.eu/listen/moveitradiosk/radio.mp3", "logo": "https://myonlineradio.sk/public/uploads/radio_img/moveit-radio/play_250_250.webp"},
-        {"nazov": "Fun Rádio Leto", "url": "https://stream.funradio.sk:8000/summer128.mp3", "logo": "https://cdn.radia.sk/_radia/loga/app/fun-letne-hity.webp?v=11"},
-        {"nazov": "Fun Rádio Mileniálky", "url": "https://stream.funradio.sk:8000/milenialky128.mp3", "logo": "https://cdn.radia.sk/_radia/loga/coverflow/fun-milenialky.png"},
-        {"nazov": "Fun Rádio Dance", "url": "http://stream.funradio.sk:8000/dance128.mp3", "logo": "https://cdn.radia.sk/_radia/loga/coverflow/fun-dance.png"},
-        {"nazov": "Fun Rádio Chill", "url": "https://stream.funradio.sk/chill128.mp3", "logo": "https://cdn.radia.sk/_radia/loga/coverflow/fun-chill.png"},
-        {"nazov": "Fun Rádio 80's - 90's", "url": "http://stream.funradio.sk:8000/80-90-128.mp3", "logo": "https://cdn.radia.sk/_radia/loga/nadpis/fun-80-90-roky.webp?v=1"},
-        {"nazov": "Fun Rádio CZ - SK", "url": "http://stream.funradio.sk:8000/cs128.mp3", "logo": "https://cdn.radia.sk/_radia/loga/coverflow/fun-cz-sk.png"},
-        {"nazov": "V2Beat Radio", "url": "https://de1se01.v2beat.live/icecast.audio", "logo": "https://app.v2beat.com/images/viib-v2beat-logo-neon.jpg"},
-        {"nazov": "Záhorácke Rádio", "url": "http://live.zahorackeradio.sk:8080/zr128.mp3", "logo": "https://cdn.radia.sk/_radia/loga/app/zahoracke.webp?v=1"},
-        {"nazov": "Top Rádio", "url": "https://solid1.streamupsolutions.com/proxy/vhhggmih/stream", "logo": "https://cdn.radia.sk/_radia/loga/coverflow/top.png"},
-        {"nazov": "Trnavské Rádio", "url": "https://solid33.streamupsolutions.com/proxy/mujdmamw/trnavske", "logo": "https://myonlineradio.sk/public/uploads/radio_img/trnavske-radio/play_250_250.webp"},
-        {"nazov": "Rádio SUB FM", "url": "https://stream.subfm.sk/subfm", "logo": "https://cdn.radia.sk/_radia/loga/coverflow/sub-fm.png"},
-        {"nazov": "Rádio Ticho", "url": "https://solid1.streamupsolutions.com/proxy/rpiipoer/tiche", "logo": "https://cdn.radia.sk/_radia/loga/coverflow/tiche.png"},
-        {"nazov": "Sky Rádio", "url": "http://stream.skyradio.sk:8000/sky128", "logo": "https://cdn.radia.sk/_radia/loga/coverflow/sky.png"},
-        {"nazov": "Rádio Slobodný Vysielač", "url": "https://vysielanie.online/radio/8020/SV128.mp3", "logo": "https://myonlineradio.sk/public/uploads/radio_img/slobodny-vysielac/play_250_250.webp"},
-        {"nazov": "Rádio Zábava", "url": "https://stream.zeno.fm/eyac00cx1nhvv", "logo": "https://cdn.radia.sk/_radia/loga/app/zabava.webp?v=2"},
-        {"nazov": "Rádio Rusyn FM", "url": "https://stream.rusyn.fm/rusyny.mp3", "logo": "https://myonlineradio.sk/public/uploads/radio_img/rusyn-fm/play_250_250.webp"},
-        {"nazov": "Rádio X - Metal X", "url": "https://stream.radiox.sk:8443/metal.mp3", "logo": "https://myonlineradio.sk/public/uploads/radio_img/radio-x/play_250_250.webp"},
-        {"nazov": "Rádio X - Oldies X", "url": "https://stream.radiox.sk:8443/oldies.mp3", "logo": "https://myonlineradio.sk/public/uploads/radio_img/radio-x/play_250_250.webp"},
-        {"nazov": "Rádio X - Folklore X", "url": "https://stream.radiox.sk:8443/ludovky.mp3", "logo": "https://myonlineradio.sk/public/uploads/radio_img/radio-x/play_250_250.webp"},
-        {"nazov": "Rádio X - Chillout X", "url": "https://stream.radiox.sk:8443/chillout.mp3", "logo": "https://myonlineradio.sk/public/uploads/radio_img/radio-x/play_250_250.webp"},
-        {"nazov": "Rádio X - Dance X", "url": "https://stream.radiox.sk:8443/dance.mp3", "logo": "https://myonlineradio.sk/public/uploads/radio_img/radio-x/play_250_250.webp"},
-        {"nazov": "Rádio X - DNB X", "url": "https://stream.radiox.sk:8443/dnb.mp3", "logo": "https://myonlineradio.sk/public/uploads/radio_img/radio-x/play_250_250.webp"},
-        {"nazov": "Rádio X", "url": "https://stream.radiox.sk:8443/radiox_256.mp3", "logo": "https://myonlineradio.sk/public/uploads/radio_img/radio-x/play_250_250.webp"},
-        {"nazov": "Rádio X - Alternative X", "url": "https://stream.radiox.sk:8443/alternative.mp3", "logo": "https://myonlineradio.sk/public/uploads/radio_img/radio-x/play_250_250.webp"},
-        {"nazov": "Rádio Vlna - Classic Rock", "url": "https://stream.radiovlna.sk/rock-hi.mp3", "logo": "https://cdn.radia.sk/_radia/loga/coverflow/vlna-classic-rock.png"},
-        {"nazov": "Rádio Vlna - Oldies Párty", "url": "https://stream.radiovlna.sk:8000/party-hi.mp3", "logo": "https://cdn.radia.sk/_radia/loga/coverflow/vlna-oldies-party.png"},
-        {"nazov": "Rádio Vlna - 60's & 70s", "url": "https://stream.radiovlna.sk/gold-hi.mp3", "logo": "https://cdn.radia.sk/_radia/loga/coverflow/vlna-60s-70s.png"},
-        {"nazov": "Rádio Vlna - Balady", "url": "https://stream.radiovlna.sk/balady-hi.mp3", "logo": "https://cdn.radia.sk/_radia/loga/app/vlna-balady.webp?v=1"},
-        {"nazov": "Rádio v Nitre", "url": "http://195.210.28.150:8932/radiovnitre_live.mp3", "logo": "https://cdn.radia.sk/_radia/loga/coverflow/radio-v-nitre.png"},
-        {"nazov": "Rádio Vega", "url": "https://stream.sepia.sk:8000/vega128.mp3", "logo": "https://cdn.radia.sk/_radia/loga/coverflow/vega.png"},
-        {"nazov": "Rádio Tlis", "url": "https://stream.tlis.sk/tlis.mp3", "logo": "https://cdn.radia.sk/_radia/loga/coverflow/tlis.png"},
-        {"nazov": "Rádio Topoľčany", "url": "http://80.242.44.249:8000/;", "logo": "https://cdn.radia.sk/_radia/loga/coverflow/topolcany.png"},
-        {"nazov": "Radio Slovakia International", "url": "https://icecast.stv.livebox.sk/rsi_128.mp3", "logo": "https://cdn.radia.sk/_radia/loga/coverflow/slovakia-international.png"},
-        {"nazov": "Rádio Šírava", "url": "http://stream.sepia.sk:8000/radiosirava.mp3", "logo": "https://cdn.radia.sk/_radia/loga/app/sirava.webp?v=2"},
-        {"nazov": "Rádio Rock SV", "url": "https://s2.myradiostream.com/:4870/listen.mp3", "logo": "https://cdn.radia.sk/_radia/loga/coverflow/rock-sv.png"},
-        {"nazov": "Rádio Sity", "url": "https://radiosity.online:8000/aac", "logo": "https://cdn.radia.sk/_radia/loga/coverflow/sity.png"},
-        {"nazov": "Rádio Pyramída", "url": "https://icecast.stv.livebox.sk/pyramida_128.mp3", "logo": "https://www.radiomix.sk/wp-content/uploads/2024/01/radio-pyramida-560x560.png"},
-        {"nazov": "Rádio Rebeca", "url": "https://mpc2.mediacp.eu:8200/rebecaweb", "logo": "https://cdn.radia.sk/_radia/loga/app/rebeca.webp?v=2"},
-        {"nazov": "Rádio Pohoda 2", "url": "http://mpc1.mediacp.eu:18111/stream", "logo": "https://cdn.radia.sk/_radia/loga/coverflow/pohoda2.png"},
-        {"nazov": "Rádio Pokoj", "url": "http://radioserver.online:8822/;", "logo": "https://cdn.radia.sk/_radia/loga/app/pokoj.webp?v=2"},
-        {"nazov": "Rádio Piešťany", "url": "https://solid33.streamupsolutions.com/proxy/gktiemqb/stream", "logo": "https://myonlineradio.sk/public/uploads/radio_img/radio-piestany/play_250_250.webp"},
-        {"nazov": "Rádio Pohoda", "url": "https://audio.radiopohoda.com:8000/stream", "logo": "https://myonlineradio.sk/public/uploads/radio_img/radio-pohoda/fb_cover.jpg"},
-        {"nazov": "Rádio Paráda", "url": "https://extra.mediacp.eu/stream/RadioParada,o.z.", "logo": "https://www.radioparada.sk/wp-content/uploads/2021/12/LOGO-PARADA-NEW-1024x1024.png"},
-        {"nazov": "Rádio Patria", "url": "https://icecast.stv.livebox.sk/patria_128.mp3", "logo": "https://upload.wikimedia.org/wikipedia/commons/8/85/R%C3%A1dio_PATRIA_LOGO.jpg"},
-        {"nazov": "Rádio Modra", "url": "http://185.98.208.12:8000/;", "logo": "https://cdn.radia.sk/_radia/loga/coverflow/modra.png"},
-        {"nazov": "Rádio PaF", "url": "https://node-23.zeno.fm/92cv04cggfhvv", "logo": "https://cdn.radia.sk/_radia/loga/coverflow/paf.png"},
-        {"nazov": "Rádio Logos", "url": "http://radioserver.online:8824/;", "logo": "https://cdn.radia.sk/_radia/loga/coverflow/logos.png"},
-        {"nazov": "Rádio Metropolitan", "url": "https://mpc2.mediacp.eu:8214/stream", "logo": "https://myonlineradio.sk/public/uploads/radio_img/radio-metropolitan/play_250_250.webp"},
-        {"nazov": "Rádio Klub", "url": "https://listen.radioking.com/radio/860681/stream/930496", "logo": "https://d3t3ozftmdmh3i.cloudfront.net/staging/podcast_uploaded_nologo/44153165/44153165-1756027969361-fe65b85dada35.jpg"},
-        {"nazov": "Rádio Litera", "url": "https://icecast.stv.livebox.sk/litera_128.mp3", "logo": "https://cdn.radia.sk/_radia/loga/coverflow/litera.png"},
-        {"nazov": "Rádio KIKS - Big 90s", "url": "https://online.radiokiks.sk:8000/kiks_big90s.mp3", "logo": "https://cdn.radia.sk/_radia/loga/coverflow/kiks-big-90s.png"},
-        {"nazov": "Rádio KIKS - Rock Music", "url": "https://online.radiokiks.sk:8000/kiks_rock.mp3", "logo": "https://cdn.radia.sk/_radia/loga/coverflow/kiks-rock-music.png"},
-        {"nazov": "Rádio KIKS", "url": "https://online.radiokiks.sk:8000/kiks_hq.mp3", "logo": "https://cdn.radia.sk/_radia/loga/app/kiks.webp?v=1"},
-        {"nazov": "Rádio KIKS - Big 80s", "url": "https://online.radiokiks.sk:8000/kiks_big80s.mp3", "logo": "https://radiokiks.net/wp-content/uploads/2024/08/Logo_BIG_80.png"},
-        {"nazov": "Rádio Jemné Chillout", "url": "https://stream.bauermedia.sk/chillout-hi.mp3", "logo": "https://cdn.radia.sk/_radia/loga/coverflow/jemne-chillout.png"},
-        {"nazov": "Rádio Junior", "url": "https://icecast.stv.livebox.sk/junior_128.mp3", "logo": "https://myonlineradio.sk/public/uploads/radio_img/radio-junior/fb_cover.jpg"},
-        {"nazov": "Rádio Janko Hraško", "url": "http://78.24.9.110:31088/;", "logo": "https://myonlineradio.sk/public/uploads/radio_img/radio-janko-hrasko/play_250_250.webp"},
-        {"nazov": "Rádio Jazz", "url": "http://stream.sepia.sk:8000/jazz192.mp3", "logo": "http://radiojazz.sk/image/logo.png"},
-        {"nazov": "Rádio FanWaves", "url": "https://stream.zeno.fm/gtkbdehhekftv", "logo": "https://images.zeno.fm/ZtUvkDMtkuf8ykYmi9VmIi3zRsaaaKixAoEEe6F5Tzk/rs:fill:288:288/g:ce:0:0/aHR0cHM6Ly9wcm94eS56ZW5vLmZtL2NvbnRlbnQvc3RhdGlvbnMvYzFkZDQwMDYtMjJkNC00NjYyLWIyZGMtZjNjNTVlYmY2YWVlL2ltYWdlLz91PTE3NTUzNjM0NjEwMDA.webp"},
-        {"nazov": "Rádio Folk", "url": "https://mpc1.mediacp.eu/stream/demo2", "logo": "https://www.radiofolk.sk/wp-content/uploads/2021/08/cropped-cropped-cropped-Logo-pre-web.png"},
-        {"nazov": "Rádio Biblia", "url": "http://radiobiblia.online:8000/stream.ogg", "logo": "https://myonlineradio.sk/public/uploads/radio_img/radio-biblia/play_250_250.webp"},
-        {"nazov": "Rádio Extra", "url": "http://live.topradio.cz:8000/extra192", "logo": "https://myonlineradio.sk/public/uploads/radio_img/radio-extra/fb_cover.jpg"},
-        {"nazov": "Rádio Beta Česko a Slovenské Hity", "url": "http://109.71.67.102:8000/beta_cspop.mp3", "logo": "https://myonlineradio.sk/public/uploads/radio_img/radio-beta/play_250_250.webp"},
-        {"nazov": "Rádio Beta 80'S a 90'S", "url": "http://109.71.67.102:8000/beta_80a90.mp3", "logo": "https://myonlineradio.sk/public/uploads/radio_img/radio-beta/play_250_250.webp"},
-        {"nazov": "Rádio Beta Hráme jubilantom", "url": "http://109.71.67.102:8000/beta_jubilanti.mp3", "logo": "https://myonlineradio.sk/public/uploads/radio_img/radio-beta/play_250_250.webp"},
-        {"nazov": "Rádio Bela", "url": "http://65.109.81.84:8855/live", "logo": "https://cdn.radia.sk/_radia/loga/coverflow/bela.png"},
-        {"nazov": "Rádio Best FM", "url": "https://stream3.bestfm.sk:8000/160.aac", "logo": "https://bestfm.sk/wp-content/uploads/2021/09/logo_transparent.png"},
-        {"nazov": "Rádio Basavel", "url": "https://stream.zeno.fm/6gd9c6yn4nhvv", "logo": "https://cdn.radia.sk/_radia/loga/coverflow/basavel.png"},
-        {"nazov": "Rádio Aetter", "url": "http://stream.aetter.sk:8000/aetter", "logo": "https://cdn.radia.sk/_radia/loga/app/aetter.webp?v=1"},
-        {"nazov": "Rádio 7", "url": "https://play.radio7.sk/128", "logo": "https://cdn.radia.sk/_radia/loga/coverflow/7.png"},
-        {"nazov": "Rádio 9", "url": "http://147.232.191.167:8000/high.mp3", "logo": "https://cdn.radia.sk/_radia/loga/coverflow/9.png"},
-        {"nazov": "PARTY RADIO", "url": "https://mpc1.mediacp.eu/stream/partyradio", "logo": "http://files.exoweb.eu/13/40/13404079-0cdd-42be-88cd-e832e3e5542c.jpeg"},
-        {"nazov": "Rádio Viva", "url": "http://stream.sepia.sk:8000/viva320.mp3", "logo": "https://myonlineradio.sk/public/uploads/radio_img/radio-viva/play_250_250.webp"},
-        {"nazov": "Fresh Rádio", "url": "https://icecast2.radionet.sk/freshradio.sk", "logo": "https://myonlineradio.sk/public/uploads/radio_img/fresh-radio/play_250_250.webp"},
-        {"nazov": "Rádio Rock", "url": "https://stream.bauermedia.sk/rock-hi.mp3", "logo": "https://radiorock.sk/intro-v2.png"},
-        {"nazov": "Rádio Maria Slovakia", "url": "https://dreamsiteradiocp5.com/proxy/radiomariaslomp3?mp=/stream.mp3", "logo": "https://myonlineradio.sk/public/uploads/radio_img/radio-maria-slovensko/play_250_250.webp"},
-        {"nazov": "Rádio Lumen", "url": "https://audio.lumen.sk/live128.mp3", "logo": "https://www.radia.sk/_radia/loga/coverflow/lumen.png"},
-        {"nazov": "Na vlne Novohradu", "url": "https://radioserver.online/proxy/navlnenovohradu/novohradHQ.mp3", "logo": "https://cdn.radia.sk/_radia/loga/app/navlnenovohradu.webp"},
-        {"nazov": "Na vlne Liptova", "url": "http://radioserver.online:8009/hq.mp3", "logo": "https://www.radia.sk/_radia/loga/coverflow/na-vlne-liptova.png"},
-        {"nazov": "Mirjam Radio", "url": "https://dreamsiteradiocp5.com/proxy/rmslo?mp=/stream", "logo": "https://www.radia.sk/_radia/loga/app/mirjam.webp?v=1"},
-        {"nazov": "METALSCENA netRADIO", "url": "https://listen.radioking.com/radio/263218/stream/308365", "logo": "https://www.radia.sk/_radia/loga/coverflow/metalscena.png"},
-        {"nazov": "Mars Dance Rádio", "url": "https://stream.zenolive.com/683gf5xrxfeuv?1686916511841", "logo": "https://www.radia.sk/_radia/loga/app/mars-dance.webp?v=2"},
-        {"nazov": "HITRÁDIO SLOVAKIA", "url": "https://hitradioslovakia.stream.laut.fm/hitradioslovakia", "logo": "https://myonlineradio.sk/public/uploads/radio_img/hitradio-slovakia/play_250_250.webp"},
-        {"nazov": "BB FM", "url": "http://stream.bbfm.sk:8000/bbfm128.mp3", "logo": "https://myonlineradio.sk/public/uploads/radio_img/bb-fm-radio/play_250_250.webp"},
-        {"nazov": "Rádio Regina - Západ", "url": "https://icecast.stv.livebox.sk/regina-ba_128.mp3", "logo": "https://www.radia.sk/_radia/loga/coverflow/regina-zapad.png"},
-        {"nazov": "Rádio Regina - Stred", "url": "https://icecast.stv.livebox.sk/regina-bb_128.mp3", "logo": "https://www.radia.sk/_radia/loga/app/regina-stred.webp?v=2"},
-        {"nazov": "Rádio Regina - Východ", "url": "https://icecast.stv.livebox.sk/regina-ke_128.mp3", "logo": "https://www.radia.sk/_radia/loga/coverflow/regina-vychod.png"},
-        {"nazov": "Rádio Devín", "url": "https://icecast.stv.livebox.sk/devin_128.mp3", "logo": "https://www.radia.sk/_radia/loga/coverflow/devin.png"},
-        {"nazov": "Europa 2", "url": "https://stream.bauermedia.sk/europa2-hi.mp3", "logo": "https://www.radia.sk/_radia/loga/coverflow/europa2.png"},
-        {"nazov": "Dobré Rádio", "url": "https://stream.dobreradio.sk/dobreradio.mp3", "logo": "https://www.radia.sk/_radia/loga/coverflow/dobre.png"},
-        {"nazov": "Rádio InfoVojna", "url": "https://stream1.infovojna.com:8000/live", "logo": "https://topradio.sk/_next/image?url=%2Fimages%2Finfovojna.jpg&w=640&q=75"},
-        {"nazov": "Rádio_FM", "url": "https://icecast.stv.livebox.sk/fm_128.mp3", "logo": "https://www.radia.sk/_radia/loga/coverflow/fm.png"},
-        {"nazov": "Rádio Dychovka", "url": "https://epanel.mediacp.eu:7661/stream", "logo": "https://www.radia.sk/_radia/loga/app/dychovka.webp?v=1"},
-        {"nazov": "Rádio Košice", "url": "http://stream.ecce.sk:8000/radiokosice-128.mp3", "logo": "https://data.tvkosice.sk/images/cm/1000x0xresize/r/a/d/radiokosice/8e/fe/8efe9b31-bd08-4f5d-9168-fa656184fdd2.jpg"},
-        {"nazov": "FIT Family RADIO", "url": "http://solid67.streamupsolutions.com:8052/;", "logo": "https://www.radia.sk/_radia/loga/app/fit-family.webp?v=1"},
-        {"nazov": "Rádio WOW", "url": "https://radioserver.online:9816/radiowow.mp3", "logo": "https://www.radia.sk/_radia/loga/coverflow/wow.png"},
-        {"nazov": "Rádio Slovensko", "url": "https://icecast.stv.livebox.sk/slovensko_128.mp3", "logo": "https://myonlineradio.sk/public/uploads/radio_img/radio-slovensko/play_250_250.webp"},
-        {"nazov": "Detské Rádio", "url": "https://stream.21.sk/detskeradio-192.mp3", "logo": "https://data.tvkosice.sk/images/cm/1000x0xresize/r/a/d/radiokosice/08/80/0880daa2-a629-4ce0-9bf9-ab7765572c2f.jpg"},
-        {"nazov": "Rádio Frontinus", "url": "http://stream.frontinus.sk:8000/frontinus128.mp3", "logo": "https://myonlineradio.sk/public/uploads/radio_img/radio-frontinus/play_250_250.webp"},
-        {"nazov": "Rádio Expres", "url": "https://stream.expres.sk/128.mp3", "logo": "https://www.radia.sk/_radia/loga/coverflow/expres.png"},
-        {"nazov": "Rádio Melody", "url": "https://stream.bauermedia.sk/melody-hi.mp3", "logo": "https://www.radiomelody.sk/cover.png?f=raw"},
-        {"nazov": "Rádio Beta", "url": "http://109.71.67.102:8000/beta_live_high.mp3", "logo": "https://myonlineradio.sk/public/uploads/radio_img/radio-beta/play_250_250.webp"},
-        {"nazov": "Fun Rádio", "url": "https://stream.funradio.sk:8000/fun128.mp3", "logo": "https://myonlineradio.sk/public/uploads/radio_img/fun-radio/play_250_250.webp"},
-        {"nazov": "Rádio Vlna", "url": "http://stream.radiovlna.sk/vlna-hi.mp3", "logo": "https://myonlineradio.sk/public/uploads/radio_img/radio-vyna/play_250_250.webp"}
-    ]
+    url_cz = f"{BASE_URL}?action=ceske"
+    li_cz = xbmcgui.ListItem(label="České Rádiá")
+    li_cz.setArt({'icon': 'DefaultFolder.png'})
+    xbmcplugin.addDirectoryItem(handle=HANDLE, url=url_cz, listitem=li_cz, isFolder=True)
 
-    radia_cz = [
-        {"nazov": "Český Blaník", "url": "https://playerservices.streamtheworld.com/api/livestream-redirect/RADIO_BLANIKCZ_128.mp3", "logo": "https://radia.cz/media/default/0001/01/663721c3e5e911880a625e89abc926c8c882bce3.svg"},
-        {"nazov": "Rádio Impuls", "url": "http://icecast5.play.cz/impuls128.mp3", "logo": "https://myonlineradio.cz/public/uploads/radio_img/radio-impuls/play_250_250.webp"},
-        {"nazov": "Crazy Rádio", "url": "http://live.topradio.cz:8000/crazy128", "logo": "http://hit-radio.cz/media/logo_6a043bd4bd019.jpg"},
-        {"nazov": "Československé rádio", "url": "http://live.topradio.cz:8000/csradio128", "logo": "https://www.radioexpert.net/radio-logo/czech/%C4%9Beskoslovensk%C3%A9-r%C3%A1dio-232-most-czech-320.jpg"},
-        {"nazov": "Coop tip", "url": "http://ice4.abradio.cz/coop128.mp3", "logo": "https://www.radiomix.cz/wp-content/uploads/2022/06/coop-tip-radio-200x200.png"},
-        {"nazov": "Country Radio", "url": "https://stream.rcs.revma.com/h7rwanvb938uv", "logo": "https://myonlineradio.cz/public/uploads/radio_img/country-radio/fb_cover.jpg"},
-        {"nazov": "ClubRadio", "url": "http://icecast2.play.cz/Clubradio.mp3", "logo": "http://api.play.cz/static/radio_logo/t200/clubradio.png"},
-        {"nazov": "Color Music Radio", "url": "http://icecast6.play.cz/color192.mp3", "logo": "https://myonlineradio.cz/public/uploads/radio_img/color-music-radio/play_250_250.webp"},
-        {"nazov": "Classic Praha", "url": "https://icecast8.play.cz/classic128.mp3", "logo": "https://static.mytuner.mobi/media/tvos_radios/153/classic-praha.a62cf508.png"},
-        {"nazov": "Calimeroclub", "url": "http://live.topradio.cz:8000/calimero192", "logo": "https://www.calimeroclub.eu/img/picture/231/logo-cali.jpg"},
-        {"nazov": "Audio Kostel", "url": "https://evcast.mediacp.eu:1585/stream", "logo": "https://www.kostel.cz/logo.png"},
-        {"nazov": "Bikers Radio Doupě", "url": "http://icecast7.play.cz/bikersradiodoupe128.mp3", "logo": "https://www.bikersradio.cz/images/logo.png"},
-        {"nazov": "Alternative Times Radio", "url": "http://ice3.abradio.cz/alternative128.mp3", "logo": "https://radia.cz/media/images/0001/01/48cd28c2dab73f011e8e64dc0919ef57a7374883.png"},
-        {"nazov": "Astra Rádio", "url": "https://astra.icecast.cz/", "logo": "https://myonlineradio.cz/public/uploads/radio_img/astra-radio/fb_cover.jpg"},
-        {"nazov": "Rádio Kiss", "url": "https://n25a-eu.rcs.revma.com/asn0cmvb938uv", "logo": "https://www.kiss.cz/files/design/logo.png"},
-        {"nazov": "Evropa 2", "url": "https://ice.actve.net/fm-evropa2-128", "logo": "https://www.evropa2.cz/wp-content/themes/evropa2/assets/img/logo.png"},
-        {"nazov": "BlackFM Radio", "url": "http://icecast2.play.cz/blackfm-radio-192.mp3", "logo": "https://blackfm.cz/image/freestyle/blackfm_logo_www.jpg"},
-        {"nazov": "Blue Radio", "url": "https://stream.blueradio.cz/live", "logo": "https://stream.blueradio.cz/img/logo.png"},
-        {"nazov": "Bojler Room", "url": "https://ice4.abradio.cz/bojler_room_128.aac", "logo": "https://radia.cz/media/images/0001/01/5f75dd2c71cc2919a4a9e3b9bac72f341d0780d1.svg"},
-        {"nazov": "Bus Radio", "url": "http://mpc1.mediacp.eu:8064/;", "logo": "https://static.mytuner.mobi/media/tvos_radios/ghscgzhhctun.png"}
-    ]
+    xbmcplugin.endOfDirectory(HANDLE)
 
+def zobraz_slovenske():
+    """Zobrazí zoznam všetkých slovenských rádií"""
+    xbmcplugin.setContent(HANDLE, 'songs')
+    
+    for radio in SLOVENSKE_RADIA:
+        # Nastavenie popisku podľa tvojej požiadavky (Zobrazenie Loga na boku a text "Názov Rádia")
+        li = xbmcgui.ListItem(label=radio["nazov"])
+        
+        # Priradenie loga rádiu (bude sa zobrazovať ako ikona aj miniatúra v Kodi prehrávači)
+        li.setArt({'thumb': radio["logo"], 'icon': radio["logo"]})
+        
+        # Nastavenie hudobných info tagov. 
+        # Pridaním 'album': radio["nazov"] docielime, že pri načítaní streamu Kodi vyplní názov skladby a autora.
+        li.setInfo('music', {
+            'title': radio["nazov"],
+            'album': radio["nazov"]
+        })
+        
+        li.setProperty('IsPlayable', 'true')
+        
+        # Pridanie parametra pre vynútenie načítania metadát zo streamu (ľadový/shoutcast formát)
+        stream_url = radio["url"]
+        if "|icedir" not in stream_url and "zeno.fm" not in stream_url:
+            # Väčšina icecast streamov potrebuje tento doplnok pre živé metadáta v Kodi
+            stream_url += "|Component=Icecast"
+
+        xbmcplugin.addDirectoryItem(handle=HANDLE, url=stream_url, listitem=li, isFolder=False)
+        
+    xbmcplugin.endOfDirectory(HANDLE)
+
+def zobraz_ceske():
+    """Zobrazí hlášku, že na českých rádiách sa pracuje"""
+    dialog = xbmcgui.Dialog()
+    dialog.ok("Informácia", "Pripravujeme...")
+    hlavne_menu()
+
+def router(paramstring):
+    """Smeruje používateľa podľa toho, na čo klikol"""
+    params = dict(urllib.parse.parse_qsl(paramstring.lstrip('?')))
     action = params.get('action')
 
-    if action is None:
-        url_sk = build_url({'action': 'list', 'country': 'sk'})
-        li_sk = xbmcgui.ListItem(label='[B][COLOR yellow]Hudba:[/COLOR] 🇸🇰 Slovenské rádiá[/B]')
-        li_sk.setArt({
-            'icon': 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Flag_of_Slovakia.svg/250px-Flag_of_Slovakia.svg.png',
-            'thumb': 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Flag_of_Slovakia.svg/250px-Flag_of_Slovakia.svg.png'
-        })
-        xbmcplugin.addDirectoryItem(handle, url_sk, li_sk, isFolder=True)
-
-        url_cz = build_url({'action': 'list', 'country': 'cz'})
-        li_cz = xbmcgui.ListItem(label='[B][COLOR yellow]Hudba:[/COLOR] 🇨🇿 České rádiá[/B]')
-        li_cz.setArt({
-            'icon': 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Flag_of_the_Czech_Republic.svg/250px-Flag_of_the_Czech_Republic.svg.png',
-            'thumb': 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Flag_of_the_Czech_Republic.svg/250px-Flag_of_the_Czech_Republic.svg.png'
-        })
-        xbmcplugin.addDirectoryItem(handle, url_cz, li_cz, isFolder=True)
-
-    elif action == 'list':
-        country = params.get('country')
-        vybrane_radia = radia_sk if country == 'sk' else radia_cz
-
-        for radio in vybrane_radia:
-            logo_url = radio['logo'] + '|User-Agent=Mozilla/5.0'
-            
-            li = xbmcgui.ListItem(label=radio['nazov'])
-            li.setArt({
-                'icon': logo_url,
-                'thumb': logo_url,
-                'poster': logo_url,
-                'banner': logo_url
-            })
-            
-            # Nastavenie základných info o skladbe, ktoré Kodi dynamicky prepíše hneď, ako zachytí metadata zo streamu
-            li.setInfo('music', {
-                'title': radio['nazov'],
-                'artist': 'Rádio Stream'
-            })
-            
-            # Tieto dve vlastnosti oznamujú Kodi prehrávaču, že ide o živé rádio a má neustále sledovať zmeny pesničiek
-            li.setProperty('IsPlayable', 'true')
-            li.setProperty('IsRadio', 'true')
-            
-            xbmcplugin.addDirectoryItem(handle, radio['url'], li, isFolder=False)
-
-    xbmcplugin.endOfDirectory(handle)
+    if action == 'slovenske':
+        zobraz_slovenske()
+    elif action == 'ceske':
+        zobraz_ceske()
+    else:
+        hlavne_menu()
 
 if __name__ == '__main__':
-    main()
+    route
