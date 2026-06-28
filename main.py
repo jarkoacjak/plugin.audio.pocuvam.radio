@@ -136,14 +136,14 @@ def zobraz_slovenske():
     xbmcplugin.setContent(HANDLE, 'songs')
     
     for radio in SLOVENSKE_RADIA:
-        # Formát textového zobrazenia v zozname (Názov Rádia)
-        li = xbmcgui.ListItem(label=radio["nazov"])
+        # Zmena formátu zobrazenia podľa požiadavky: Logo - Názov Rádia
+        formatovany_nazov = f"Logo - {radio['nazov']}"
+        li = xbmcgui.ListItem(label=formatovany_nazov)
         
-        # Priradenie loga rádiu (zobrazí sa ako ikona vedľa názvu a miniatúra v prehrávači)
+        # Priradenie loga rádiu (zobrazí sa ako malá ikona vedľa názvu v zozname)
         li.setArt({'thumb': radio["logo"], 'icon': radio["logo"]})
         
-        # Nastavenie hudobných info tagov. 
-        # Pridaním 'album': radio["nazov"] docielime, že pri načítaní streamu Kodi vyplní názov skladby a autora.
+        # Hudobné tagy pre zachovanie metadát počas prehrávania
         li.setInfo('music', {
             'title': radio["nazov"],
             'album': radio["nazov"]
@@ -151,10 +151,9 @@ def zobraz_slovenske():
         
         li.setProperty('IsPlayable', 'true')
         
-        # Pridanie parametra pre vynútenie načítania metadát zo streamu (ľadový/shoutcast formát)
+        # Pridanie parametra pre vynútenie načítania metadát zo streamu
         stream_url = radio["url"]
         if "|icedir" not in stream_url and "zeno.fm" not in stream_url:
-            # Väčšina icecast streamov potrebuje tento doplnok pre živé metadáta v Kodi
             stream_url += "|Component=Icecast"
 
         xbmcplugin.addDirectoryItem(handle=HANDLE, url=stream_url, listitem=li, isFolder=False)
@@ -181,3 +180,4 @@ def router(paramstring):
 
 if __name__ == '__main__':
     router(sys.argv[2])
+    
