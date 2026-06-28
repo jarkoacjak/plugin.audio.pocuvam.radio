@@ -136,14 +136,13 @@ def zobraz_slovenske():
     xbmcplugin.setContent(HANDLE, 'songs')
     
     for radio in SLOVENSKE_RADIA:
-        # Zmena formátu zobrazenia podľa požiadavky: Logo - Názov Rádia
-        formatovany_nazov = f"Logo - {radio['nazov']}"
-        li = xbmcgui.ListItem(label=formatovany_nazov)
+        # Čisté zobrazenie názvu rádia. Kodi automaticky pridá malé logo z nastavenia setArt na začiatok riadku.
+        li = xbmcgui.ListItem(label=radio["nazov"])
         
-        # Priradenie loga rádiu (zobrazí sa ako malá ikona vedľa názvu v zozname)
+        # Priradenie loga rádiu (bude zobrazené ako miniatúra/ikona)
         li.setArt({'thumb': radio["logo"], 'icon': radio["logo"]})
         
-        # Hudobné tagy pre zachovanie metadát počas prehrávania
+        # Hudobné info tagy pre korektné prepisovanie názvov pesničiek zo streamu
         li.setInfo('music', {
             'title': radio["nazov"],
             'album': radio["nazov"]
@@ -151,7 +150,7 @@ def zobraz_slovenske():
         
         li.setProperty('IsPlayable', 'true')
         
-        # Pridanie parametra pre vynútenie načítania metadát zo streamu
+        # Ošetrenie adries a vynútenie Icecast metadát (názov hrajúcej pesničky)
         stream_url = radio["url"]
         if "|icedir" not in stream_url and "zeno.fm" not in stream_url:
             stream_url += "|Component=Icecast"
