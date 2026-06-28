@@ -8,10 +8,10 @@
     </extension>
     <extension point="xbmc.addon.metadata">
         <platform>all</platform>
-        <language>sk_sk</language>
-        <summary lang="sk_sk">Doplnky hudby - Slovenské a České rádiá</summary>
-        <description lang="sk_sk">Prehrávač slovenských a českých rádio staníc vytvorený pre Kodi pod názvom Počúvam Rádio.</description>
-        <disclaimer lang="sk_sk">Niektoré streamy môžu vyžadovať aktívne internetové pripojenie.</disclaimer>
+        <language>sk_SK</language>
+        <summary lang="sk_SK">Doplnok na počúvanie slovenských a českých rádií</summary>
+        <description lang="sk_SK">Jednoduchý doplnok pre Kodi, ktorý ti umožní streamovať tvoje obľúbené slovenské rádiá s podporou metadát o skladbách a logami staníc.</description>
+        <disclaimer lang="sk_SK">Všetky streamy sú majetkom jednotlivých rádiových staníc.</disclaimer>
         <assets>
             <icon>icon.png</icon>
             <fanart>fanart.jpg</fanart>
