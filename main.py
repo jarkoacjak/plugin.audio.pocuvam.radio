@@ -114,35 +114,41 @@ SLOVENSKE_RADIA = [
     {"nazov": "Rádio Melody", "url": "https://stream.bauermedia.sk/melody-hi.mp3", "logo": "https://www.radiomelody.sk/cover.png?f=raw"},
     {"nazov": "Rádio Beta", "url": "http://109.71.67.102:8000/beta_live_high.mp3", "logo": "https://myonlineradio.sk/public/uploads/radio_img/radio-beta/play_250_250.webp"},
     {"nazov": "Fun Rádio", "url": "https://stream.funradio.sk:8000/fun128.mp3", "logo": "https://myonlineradio.sk/public/uploads/radio_img/fun-radio/play_250_250.webp"},
-    {"nazov": "Rádio Vlna", "url": "http://stream.radiovlna.sk/vlna-hi.mp3", "logo": "https://myonlineradio.sk/public/uploads/radio_img/radio-vlna/play_250_250.webp"}
+    {"nazov": "Rádio Vlna", "url": "http://stream.radiovlna.sk/vlna-hi.mp3", "logo": "https://myonlineradio.sk/public/uploads/radio_img/radio-vna/play_250_250.webp"}
 ]
 
 def hlavne_menu():
     """Zobrazí základné menu: Slovenské a České rádiá"""
     url_sk = f"{BASE_URL}?action=slovenske"
     li_sk = xbmcgui.ListItem(label="Slovenské Rádiá")
-    li_sk.setArt({'icon': 'DefaultFolder.png'})
+    li_sk.setArt({'icon': 'DefaultFolder.png', 'thumb': 'DefaultFolder.png'})
     xbmcplugin.addDirectoryItem(handle=HANDLE, url=url_sk, listitem=li_sk, isFolder=True)
 
     url_cz = f"{BASE_URL}?action=ceske"
     li_cz = xbmcgui.ListItem(label="České Rádiá")
-    li_cz.setArt({'icon': 'DefaultFolder.png'})
+    li_cz.setArt({'icon': 'DefaultFolder.png', 'thumb': 'DefaultFolder.png'})
     xbmcplugin.addDirectoryItem(handle=HANDLE, url=url_cz, listitem=li_cz, isFolder=True)
 
     xbmcplugin.endOfDirectory(HANDLE)
 
 def zobraz_slovenske():
-    """Zobrazí zoznam všetkých slovenských rádií"""
-    xbmcplugin.setContent(HANDLE, 'songs')
+    """Zobrazí zoznam všetkých slovenských rádií s vynútenými ikonami"""
+    # Zmena contentu na 'files', aby skiny neskrývali miniatúry
+    xbmcplugin.setContent(HANDLE, 'files')
     
     for radio in SLOVENSKE_RADIA:
-        # Čisté zobrazenie názvu rádia. Kodi automaticky pridá malé logo z nastavenia setArt na začiatok riadku.
         li = xbmcgui.ListItem(label=radio["nazov"])
         
-        # Priradenie loga rádiu (bude zobrazené ako miniatúra/ikona)
-        li.setArt({'thumb': radio["logo"], 'icon': radio["logo"]})
+        # Kompletné priradenie loga pre všetky možné typy zobrazení v Kodi
+        li.setArt({
+            'thumb': radio["logo"], 
+            'icon': radio["logo"],
+            'poster': radio["logo"],
+            'fanart': radio["logo"],
+            'clearlogo': radio["logo"]
+        })
         
-        # Hudobné info tagy pre korektné prepisovanie názvov pesničiek zo streamu
+        # Hudobné info tagy pre prepisovanie názvov pesničiek zo streamu
         li.setInfo('music', {
             'title': radio["nazov"],
             'album': radio["nazov"]
@@ -179,4 +185,3 @@ def router(paramstring):
 
 if __name__ == '__main__':
     router(sys.argv[2])
-    
