@@ -4,7 +4,6 @@ import xbmcgui
 import xbmcplugin
 
 def build_url(query):
-    # Funkcia na správne generovanie odkazov v menu
     return sys.argv[0] + '?' + urllib.parse.urlencode(query)
 
 def main():
@@ -12,10 +11,10 @@ def main():
     arg_string = sys.argv[2][1:]
     params = dict(urllib.parse.parse_qsl(arg_string))
 
-    # Nastavenie typu obsahu na hudbu pre lepšie zobrazenie
-    xbmcplugin.setContent(handle, 'songs')
+    # Zmena typu obsahu na 'files', aby Kodi netrvalo na hudobnej knižnici (odstráni prázdne info)
+    xbmcplugin.setContent(handle, 'files')
 
-    # --- KOMPLETNÁ ČISTÁ DATABÁZA RÁDIÍ ---
+    # --- DATABÁZA RÁDIÍ ---
     radia_sk = [
         {"nazov": "Moveit Rádio", "url": "https://play.radiosebastian.eu/listen/moveitradiosk/radio.mp3", "logo": "https://myonlineradio.sk/public/uploads/radio_img/moveit-radio/play_250_250.webp"},
         {"nazov": "Fun Rádio Leto", "url": "https://stream.funradio.sk:8000/summer128.mp3", "logo": "https://cdn.radia.sk/_radia/loga/app/fun-letne-hity.webp?v=11"},
@@ -171,7 +170,6 @@ def main():
         vybrane_radia = radia_sk if country == 'sk' else radia_cz
 
         for radio in vybrane_radia:
-            # Dynamické pridanie User-Agenta priamo do odkazu na logo pre bezproblémové načítanie v Kodi
             logo_url = radio['logo'] + '|User-Agent=Mozilla/5.0'
             
             li = xbmcgui.ListItem(label=radio['nazov'])
@@ -181,7 +179,13 @@ def main():
                 'poster': logo_url,
                 'banner': logo_url
             })
-            li.setInfo('music', {'title': radio['nazov']})
+            
+            # Nastavenie informácií tak, aby Kodi nezobrazovalo prázdny text, ale priamo názov streamu rádio stanice
+            li.setInfo('video', {
+                'title': radio['nazov'],
+                'plot': f"Počúvate rádio {radio['nazov']}"
+            })
+            
             li.setProperty('IsPlayable', 'true')
             xbmcplugin.addDirectoryItem(handle, radio['url'], li, isFolder=False)
 
