@@ -11,8 +11,8 @@ def main():
     arg_string = sys.argv[2][1:]
     params = dict(urllib.parse.parse_qsl(arg_string))
 
-    # Nastavenie na 'files' skryje hlášky hudobnej knižnice o chýbajúcich informáciách
-    xbmcplugin.setContent(handle, 'files')
+    # Nastavenie na 'songs' zapne plnú podporu hudobného obsahu
+    xbmcplugin.setContent(handle, 'songs')
 
     # --- DATABÁZA RÁDIÍ ---
     radia_sk = [
@@ -120,7 +120,7 @@ def main():
         {"nazov": "Rádio Melody", "url": "https://stream.bauermedia.sk/melody-hi.mp3", "logo": "https://www.radiomelody.sk/cover.png?f=raw"},
         {"nazov": "Rádio Beta", "url": "http://109.71.67.102:8000/beta_live_high.mp3", "logo": "https://myonlineradio.sk/public/uploads/radio_img/radio-beta/play_250_250.webp"},
         {"nazov": "Fun Rádio", "url": "https://stream.funradio.sk:8000/fun128.mp3", "logo": "https://myonlineradio.sk/public/uploads/radio_img/fun-radio/play_250_250.webp"},
-        {"nazov": "Rádio Vlna", "url": "http://stream.radiovlna.sk/vlna-hi.mp3", "logo": "https://myonlineradio.sk/public/uploads/radio_img/radio-vlna/play_250_250.webp"}
+        {"nazov": "Rádio Vlna", "url": "http://stream.radiovlna.sk/vlna-hi.mp3", "logo": "https://myonlineradio.sk/public/uploads/radio_img/radio-vyna/play_250_250.webp"}
     ]
 
     radia_cz = [
@@ -180,10 +180,16 @@ def main():
                 'banner': logo_url
             })
             
-            # Prázdne setInfo zabráni Kodi v generovaní automatického textu "Nie sú k dispozícii..."
-            li.setInfo('video', {})
+            # Nastavenie základných info o skladbe, ktoré Kodi dynamicky prepíše hneď, ako zachytí metadata zo streamu
+            li.setInfo('music', {
+                'title': radio['nazov'],
+                'artist': 'Rádio Stream'
+            })
             
+            # Tieto dve vlastnosti oznamujú Kodi prehrávaču, že ide o živé rádio a má neustále sledovať zmeny pesničiek
             li.setProperty('IsPlayable', 'true')
+            li.setProperty('IsRadio', 'true')
+            
             xbmcplugin.addDirectoryItem(handle, radio['url'], li, isFolder=False)
 
     xbmcplugin.endOfDirectory(handle)
