@@ -136,10 +136,10 @@ def zobraz_slovenske():
     xbmcplugin.setContent(HANDLE, 'songs')
     
     for radio in SLOVENSKE_RADIA:
-        # Nastavenie popisku podľa tvojej požiadavky (Zobrazenie Loga na boku a text "Názov Rádia")
+        # Formát textového zobrazenia v zozname (Názov Rádia)
         li = xbmcgui.ListItem(label=radio["nazov"])
         
-        # Priradenie loga rádiu (bude sa zobrazovať ako ikona aj miniatúra v Kodi prehrávači)
+        # Priradenie loga rádiu (zobrazí sa ako ikona vedľa názvu a miniatúra v prehrávači)
         li.setArt({'thumb': radio["logo"], 'icon': radio["logo"]})
         
         # Nastavenie hudobných info tagov. 
@@ -180,4 +180,4 @@ def router(paramstring):
         hlavne_menu()
 
 if __name__ == '__main__':
-    route
+    router(sys.argv[2])
