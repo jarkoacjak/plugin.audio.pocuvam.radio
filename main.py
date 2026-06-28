@@ -11,8 +11,8 @@ def main():
     arg_string = sys.argv[2][1:]
     params = dict(urllib.parse.parse_qsl(arg_string))
 
-    # Nastavenie obsahu na hudobné skladby, aby Kodi v paneli správne zobrazovalo interpretov a pesničky
-    xbmcplugin.setContent(handle, 'songs')
+    # Nastavenie na 'files' skryje hlášky hudobnej knižnice o chýbajúcich informáciách
+    xbmcplugin.setContent(handle, 'files')
 
     # --- DATABÁZA RÁDIÍ ---
     radia_sk = [
@@ -180,11 +180,8 @@ def main():
                 'banner': logo_url
             })
             
-            # Nastavenie informácií tak, aby Kodi v paneli očakávalo hudobné značky
-            li.setInfo('music', {
-                'title': radio['nazov'],   # Sem sa automaticky zo streamu vloží názov pesničky
-                'artist': ['Živé vysielanie'] # Zobrazí sa v poli interpret
-            })
+            # Prázdne setInfo zabráni Kodi v generovaní automatického textu "Nie sú k dispozícii..."
+            li.setInfo('video', {})
             
             li.setProperty('IsPlayable', 'true')
             xbmcplugin.addDirectoryItem(handle, radio['url'], li, isFolder=False)
