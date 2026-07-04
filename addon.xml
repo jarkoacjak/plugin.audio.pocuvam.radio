@@ -8,10 +8,9 @@
     </extension>
     <extension point="xbmc.addon.metadata">
         <platform>all</platform>
-        <language>sk_SK</language>
-        <summary lang="sk_SK">Doplnok na počúvanie slovenských a českých rádií</summary>
-        <description lang="sk_SK">Jednoduchý doplnok pre Kodi, ktorý ti umožní streamovať tvoje obľúbené slovenské rádiá s podporou metadát o skladbách a logami staníc.</description>
-        <disclaimer lang="sk_SK">Všetky streamy sú majetkom jednotlivých rádiových staníc.</disclaimer>
+        <language>sk_sk</language>
+        <summary lang="sk">Slovenské a české internetové rádiá</summary>
+        <description lang="sk">Jednoduchý doplnok na prehrávanie slovenských a českých rádií s podporou živých metadát a logami staníc.</description>
         <assets>
             <icon>icon.png</icon>
             <fanart>fanart.jpg</fanart>
