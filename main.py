@@ -11,7 +11,7 @@ def main():
     arg_string = sys.argv[2][1:]
     params = dict(urllib.parse.parse_qsl(arg_string))
 
-    # Nastavenie obsahu na 'songs' pre kompletnú podporu hudobných metadát a stavových ikon
+    # Nastavenie obsahu na 'songs' pre kompletnú podporu živých hudobných metadát (názov a umelec) a ikony stavu prehrávania
     xbmcplugin.setContent(handle, 'songs')
 
     # --- DATABÁZA RÁDIÍ ---
@@ -132,7 +132,8 @@ def main():
         {"nazov": "Country Radio", "url": "https://stream.rcs.revma.com/h7rwanvb938uv", "logo": "https://myonlineradio.cz/public/uploads/radio_img/country-radio/fb_cover.jpg"},
         {"nazov": "ClubRadio", "url": "http://icecast2.play.cz/Clubradio.mp3", "logo": "http://api.play.cz/static/radio_logo/t200/clubradio.png"},
         {"nazov": "Color Music Radio", "url": "http://icecast6.play.cz/color192.mp3", "logo": "https://myonlineradio.cz/public/uploads/radio_img/color-music-radio/play_250_250.webp"},
-         {"nazov": "Calimeroclub", "url": "http://live.topradio.cz:8000/calimero192", "logo": "https://www.calimeroclub.eu/img/picture/231/logo-cali.jpg"},
+        {"nazov": "Classic Praha", "url": "https://icecast8.play.cz/classic128.mp3", "logo": "https://static.mytuner.mobi/media/tvos_radios/153/classic-praha.a62cf508.png"},
+        {"nazov": "Calimeroclub", "url": "http://live.topradio.cz:8000/calimero192", "logo": "https://www.calimeroclub.eu/img/picture/231/logo-cali.jpg"},
         {"nazov": "Audio Kostel", "url": "https://evcast.mediacp.eu:1585/stream", "logo": "https://www.kostel.cz/logo.png"},
         {"nazov": "Bikers Radio Doupě", "url": "http://icecast7.play.cz/bikersradiodoupe128.mp3", "logo": "https://www.bikersradio.cz/images/logo.png"},
         {"nazov": "Alternative Times Radio", "url": "http://ice3.abradio.cz/alternative128.mp3", "logo": "https://radia.cz/media/images/0001/01/48cd28c2dab73f011e8e64dc0919ef57a7374883.png"},
@@ -172,6 +173,8 @@ def main():
             logo_url = radio['logo'] + '|User-Agent=Mozilla/5.0'
             
             li = xbmcgui.ListItem(label=radio['nazov'])
+            
+            # Správne namapovanie loga zabezpečí zobrazenie malej ikony (thumb) hneď vedľa názvu v zozname
             li.setArt({
                 'icon': logo_url,
                 'thumb': logo_url,
@@ -179,14 +182,8 @@ def main():
                 'banner': logo_url
             })
             
-            # Nastavenie predvoleného názvu pred spustením streamu. 
-            # Kodi tieto hodnoty automaticky prepíše živými metadátami hneď po načítaní streamu.
-            li.setInfo('music', {
-                'title': radio['nazov'],
-                'artist': radio['nazov']
-            })
-            
-            # Prvky pre plnú kontrolu stavu (IsPlayable) a správne spracovanie streamu (IsRadio)
+            # Ponechanie plnohodnotných vlastností pre natívne fungovanie metadát v reálnom čase (názov piesne, autor) 
+            # a stavových ikon (prehráva sa, zastavené) priamo v Kodi
             li.setProperty('IsPlayable', 'true')
             li.setProperty('IsRadio', 'true')
             
