@@ -172,10 +172,10 @@ def main():
         for radio in vybrane_radia:
             logo_url = radio['logo'] + '|User-Agent=Mozilla/5.0'
             
-            # OPRAVA PRE SKINY: Pridaný parameter thumbnailImage priamo do ListItem, čo zaručene vynúti zobrazenie malého loga vedľa názvu rádia
+            # Priradenie loga priamo cez thumbnailImage vynúti malé ikony v riadkoch zoznamu pre všetky skiny
             li = xbmcgui.ListItem(label=radio['nazov'], thumbnailImage=logo_url)
             
-            # Ponechávame kompletnú štruktúru pre kompatibilitu so všetkými typmi zobrazení skinov
+            # Kompletná súprava pre zobrazenie grafiky (Cover, OSD, Info panely)
             li.setArt({
                 'icon': logo_url,
                 'thumb': logo_url,
@@ -183,8 +183,7 @@ def main():
                 'banner': logo_url
             })
             
-            # Ponechanie plnohodnotných vlastností pre natívne živé metadáta (zobrazenie skladby/interpreta v pravom rohu po načítaní) 
-            # a stavových ikon prehrávania
+            # Ponechanie vlastností pre správnu identifikáciu streamu a preberanie živých informácií (názov pesničky / interpret)
             li.setProperty('IsPlayable', 'true')
             li.setProperty('IsRadio', 'true')
             
