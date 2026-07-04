@@ -11,7 +11,7 @@ def main():
     arg_string = sys.argv[2][1:]
     params = dict(urllib.parse.parse_qsl(arg_string))
 
-    # Nastavenie obsahu na 'songs' pre kompletnú podporu živých hudobných metadát (názov a umelec) a ikony stavu prehrávania
+    # Nastavenie obsahu na 'songs' pre kompletnú podporu živých hudobných metadát a ikony stavu prehrávania
     xbmcplugin.setContent(handle, 'songs')
 
     # --- DATABÁZA RÁDIÍ ---
@@ -150,7 +150,7 @@ def main():
 
     if action is None:
         url_sk = build_url({'action': 'list', 'country': 'sk'})
-        li_sk = xbmcgui.ListItem(label='[B][COLOR yellow]Hudba:[/COLOR] 🇸🇰 Slovenské rádiá[/B]')
+        li_sk = xbmcgui.ListItem(label='[B][COLOR yellow]Hudba:[/COLOR] 🇸🇰 Slovenské rádiá[/B]', thumbnailImage='https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Flag_of_Slovakia.svg/250px-Flag_of_Slovakia.svg.png')
         li_sk.setArt({
             'icon': 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Flag_of_Slovakia.svg/250px-Flag_of_Slovakia.svg.png',
             'thumb': 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Flag_of_Slovakia.svg/250px-Flag_of_Slovakia.svg.png'
@@ -158,7 +158,7 @@ def main():
         xbmcplugin.addDirectoryItem(handle, url_sk, li_sk, isFolder=True)
 
         url_cz = build_url({'action': 'list', 'country': 'cz'})
-        li_cz = xbmcgui.ListItem(label='[B][COLOR yellow]Hudba:[/COLOR] 🇨🇿 České rádiá[/B]')
+        li_cz = xbmcgui.ListItem(label='[B][COLOR yellow]Hudba:[/COLOR] 🇨🇿 České rádiá[/B]', thumbnailImage='https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Flag_of_the_Czech_Republic.svg/250px-Flag_of_the_Czech_Republic.svg.png')
         li_cz.setArt({
             'icon': 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Flag_of_the_Czech_Republic.svg/250px-Flag_of_the_Czech_Republic.svg.png',
             'thumb': 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Flag_of_the_Czech_Republic.svg/250px-Flag_of_the_Czech_Republic.svg.png'
@@ -172,9 +172,10 @@ def main():
         for radio in vybrane_radia:
             logo_url = radio['logo'] + '|User-Agent=Mozilla/5.0'
             
-            li = xbmcgui.ListItem(label=radio['nazov'])
+            # OPRAVA PRE SKINY: Pridaný parameter thumbnailImage priamo do ListItem, čo zaručene vynúti zobrazenie malého loga vedľa názvu rádia
+            li = xbmcgui.ListItem(label=radio['nazov'], thumbnailImage=logo_url)
             
-            # Správne namapovanie loga zabezpečí zobrazenie malej ikony (thumb) hneď vedľa názvu v zozname
+            # Ponechávame kompletnú štruktúru pre kompatibilitu so všetkými typmi zobrazení skinov
             li.setArt({
                 'icon': logo_url,
                 'thumb': logo_url,
@@ -182,8 +183,8 @@ def main():
                 'banner': logo_url
             })
             
-            # Ponechanie plnohodnotných vlastností pre natívne fungovanie metadát v reálnom čase (názov piesne, autor) 
-            # a stavových ikon (prehráva sa, zastavené) priamo v Kodi
+            # Ponechanie plnohodnotných vlastností pre natívne živé metadáta (zobrazenie skladby/interpreta v pravom rohu po načítaní) 
+            # a stavových ikon prehrávania
             li.setProperty('IsPlayable', 'true')
             li.setProperty('IsRadio', 'true')
             
