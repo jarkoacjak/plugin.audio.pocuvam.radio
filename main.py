@@ -11,9 +11,8 @@ def main():
     arg_string = sys.argv[2][1:]
     params = dict(urllib.parse.parse_qsl(arg_string))
 
-    # Prepnutie na čisté zobrazenie súborov, ktoré nevyžaduje žiadne trvanie/dobu skladby
-    # a pritom zachováva zobrazenie malých štvorcových ikon vedľa názvov
-    xbmcplugin.setContent(handle, 'files')
+    # Nastavenie obsahu na 'songs' pre správne načítanie audio streamov a zobrazenie log
+    xbmcplugin.setContent(handle, 'songs')
 
     # --- DATABÁZA RÁDIÍ ---
     radia_sk = [
@@ -177,21 +176,26 @@ def main():
             
             li = xbmcgui.ListItem(label=radio['nazov'])
             
-            # Kompletné naplnenie grafických ciest pre veľké aj malé logá bez výnimky
+            # Nastavujeme veľké logo rádií (thumb/icon), ktoré sa ukáže naľavo
             li.setArt({
                 'thumb': logo_url,
-                'icon': logo_url,
-                'poster': logo_url,
-                'banner': logo_url,
-                'fanart': logo_url
+                'icon': logo_url
             })
             
-            # Odstránenie nežiaducich textov pod veľkým logom použitím prázdnych stringov
-            # Bez pridávania parametrov času/doby skladby
-            li.setInfo('video', {
-                'title': radio['nazov'],
-                'plot': ''
-            })
+            # ODSTRÁNENIE TEXTU POD VEĽKÝM LOGOM:
+            # Cez getMusicInfoTag nastavíme iba čistý názov a prázdne polia pre Interpreta a Album.
+            # Keďže nenastavujeme Duration (trvanie) ani Track, prázdne štvorčeky v riadkoch sa vôbec nezobrazia.
+            try:
+                info = li.getMusicInfoTag()
+                info.setTitle(radio['nazov'])
+                info.setArtist('')
+                info.setAlbum('')
+            except AttributeError:
+                li.setInfo('music', {
+                    'title': radio['nazov'],
+                    'artist': '',
+                    'album': ''
+                })
             
             li.setProperty('IsPlayable', 'true')
             li.setProperty('IsRadio', 'true')
@@ -200,7 +204,7 @@ def main():
             xbmcplugin.addDirectoryItem(handle, play_url, li, isFolder=False)
 
     elif action == 'play':
-        # SPUSTENIE PREHRÁVANIA STREAMU
+        # PREHRÁVANIE STREAMU
         stream_url = params.get('url')
         play_item = xbmcgui.ListItem(path=stream_url)
         play_item.setProperty('IsRadio', 'true')
