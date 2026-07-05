@@ -11,9 +11,9 @@ def main():
     arg_string = sys.argv[2][1:]
     params = dict(urllib.parse.parse_qsl(arg_string))
 
-    # Nastavenie obsahu na 'files' zabezpečí, že Kodi namiesto systémových ikon priečinkov
-    # použije priamo nastavené ikony/logá jednotlivých rádií
-    xbmcplugin.setContent(handle, 'files')
+    # Ponechávame hudobný režim 'songs', aby Kodi správne spracovávalo stream,
+    # zobrazovalo malé logá rádií v riadkoch a načítavalo živé metadáta (autor/pesnička hore)
+    xbmcplugin.setContent(handle, 'songs')
 
     # --- DATABÁZA RÁDIÍ ---
     radia_sk = [
@@ -177,20 +177,24 @@ def main():
             
             li = xbmcgui.ListItem(label=radio['nazov'])
             
-            # Priradenie loga na pozíciu ikony zoznamu ('icon') a náhľadu vľavo ('thumb')
-            # To kompletne nahradí prázdne štvorčeky v riadkoch reálnym logom rádia
+            # Nastavujeme logá – 'icon' vykreslí malé logo priamo do zoznamu (odstráni prázdny štvorček),
+            # a 'thumb' vykreslí veľké štvorcové logo na ľavú stranu.
             li.setArt({
-                'thumb': logo_url,
                 'icon': logo_url,
-                'poster': logo_url
+                'thumb': logo_url
             })
             
-            # ODSTRÁNENIE TEXTU POD VEĽKÝM LOGOM:
-            # Použitím čistého typu 'video' s prázdnym popisom zmažeme nápisy o nedostupnosti informácií
-            li.setInfo('video', {
-                'title': radio['nazov'],
-                'plot': ''
-            })
+            # SKRYTIE STATICKÉHO TEXTU NAĽAVO BEZ BLOKOVANIA ŽIVÝCH METADÁT:
+            # Tým, že do setInfo alebo cez music tag nezadáme žiadneho napevno napísaného autora (artist), 
+            # Kodi v zozname skryje nápis "Nie sú k dispozícii informácie". 
+            # Akonáhle však rádio spustíš, živý stream začne posielať reálne dáta a autor s pesničkou sa hore objavia!
+            try:
+                info = li.getMusicInfoTag()
+                info.setTitle(radio['nazov'])
+            except AttributeError:
+                li.setInfo('music', {
+                    'title': radio['nazov']
+                })
             
             li.setProperty('IsPlayable', 'true')
             li.setProperty('IsRadio', 'true')
