@@ -11,8 +11,9 @@ def main():
     arg_string = sys.argv[2][1:]
     params = dict(urllib.parse.parse_qsl(arg_string))
 
-    # Nastavenie obsahu na 'songs' pre správne načítanie audio streamov a zobrazenie log
-    xbmcplugin.setContent(handle, 'songs')
+    # Nastavenie obsahu na 'files' zabezpečí, že Kodi namiesto systémových ikon priečinkov
+    # použije priamo nastavené ikony/logá jednotlivých rádií
+    xbmcplugin.setContent(handle, 'files')
 
     # --- DATABÁZA RÁDIÍ ---
     radia_sk = [
@@ -176,26 +177,20 @@ def main():
             
             li = xbmcgui.ListItem(label=radio['nazov'])
             
-            # Nastavujeme veľké logo rádií (thumb/icon), ktoré sa ukáže naľavo
+            # Priradenie loga na pozíciu ikony zoznamu ('icon') a náhľadu vľavo ('thumb')
+            # To kompletne nahradí prázdne štvorčeky v riadkoch reálnym logom rádia
             li.setArt({
                 'thumb': logo_url,
-                'icon': logo_url
+                'icon': logo_url,
+                'poster': logo_url
             })
             
             # ODSTRÁNENIE TEXTU POD VEĽKÝM LOGOM:
-            # Cez getMusicInfoTag nastavíme iba čistý názov a prázdne polia pre Interpreta a Album.
-            # Keďže nenastavujeme Duration (trvanie) ani Track, prázdne štvorčeky v riadkoch sa vôbec nezobrazia.
-            try:
-                info = li.getMusicInfoTag()
-                info.setTitle(radio['nazov'])
-                info.setArtist('')
-                info.setAlbum('')
-            except AttributeError:
-                li.setInfo('music', {
-                    'title': radio['nazov'],
-                    'artist': '',
-                    'album': ''
-                })
+            # Použitím čistého typu 'video' s prázdnym popisom zmažeme nápisy o nedostupnosti informácií
+            li.setInfo('video', {
+                'title': radio['nazov'],
+                'plot': ''
+            })
             
             li.setProperty('IsPlayable', 'true')
             li.setProperty('IsRadio', 'true')
