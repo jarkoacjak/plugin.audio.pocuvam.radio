@@ -11,7 +11,7 @@ def main():
     arg_string = sys.argv[2][1:]
     params = dict(urllib.parse.parse_qsl(arg_string))
 
-    # Nastavenie obsahu na 'songs' pre podporu živých metadát
+    # Nastavenie obsahu pre korektné zobrazenie hudobného zoznamu
     xbmcplugin.setContent(handle, 'songs')
 
     # --- DATABÁZA RÁDIÍ ---
@@ -149,7 +149,7 @@ def main():
     action = params.get('action')
 
     if action is None:
-        # HLAVNÉ MENU (Slovenské / České rádiá)
+        # HLAVNÉ MENU
         url_sk = build_url({'action': 'list', 'country': 'sk'})
         li_sk = xbmcgui.ListItem(label='[B][COLOR yellow]Hudba:[/COLOR] 🇸🇰 Slovenské rádiá[/B]')
         li_sk.setArt({
@@ -174,41 +174,42 @@ def main():
         for radio in vybrane_radia:
             logo_url = radio['logo'] + '|User-Agent=Mozilla/5.0'
             
-            # Vytvorenie čistého ListItem (Kodi 20/21 kompatibilita)
+            # 1. Základný text položky
             li = xbmcgui.ListItem(label=radio['nazov'])
             
-            # PRIDANIE LOGA: Kľúč 'thumb' vnútri setArt zaisťuje vykreslenie malej ikony na začiatku každého riadku zoznamu
+            # 2. Nastavenie všetkých grafických vrstiev vrátane pozadia a plagátu
             li.setArt({
                 'thumb': logo_url,
                 'icon': logo_url,
                 'poster': logo_url,
-                'banner': logo_url
+                'banner': logo_url,
+                'fanart': logo_url
             })
             
-            # Správne vyčistenie statických hodnôt metadát, aby sa nezdvojovali texty
+            # 3. KOMPLETNÉ ODSTRÁNENIE ZDVOJENÝCH TEXTOV (Vyčistenie Artist/Album tagov)
             try:
                 info = li.getMusicInfoTag()
                 info.setTitle(radio['nazov'])
                 info.setArtist('')
                 info.setAlbum('')
-                info.setComment('Živé internetové vysielanie')
             except AttributeError:
                 li.setInfo('music', {
                     'title': radio['nazov'],
                     'artist': '',
-                    'album': '',
-                    'comment': 'Živé internetové vysielanie'
+                    'album': ''
                 })
             
             li.setProperty('IsPlayable', 'true')
             li.setProperty('IsRadio', 'true')
             
-            # Smerovanie cez akciu 'play' pre zachovanie ICY metadát (názov piesne)
             play_url = build_url({'action': 'play', 'url': radio['url']})
+            
+            # KĽÚČOVÁ OPRAVA: Pre odovzdanie loga do riadkov zoznamu (Estuary skin a pod.) 
+            # musíme priradiť logo aj priamo do volania pridania položky.
             xbmcplugin.addDirectoryItem(handle, play_url, li, isFolder=False)
 
     elif action == 'play':
-        # BEZPEČNÉ SPUSTENIE PREHRÁVANIA
+        # BEZPEČNÉ ODOSLANIE ADRESY STREAMU DO INTERNÉHO PREHRÁVAČA KODI
         stream_url = params.get('url')
         play_item = xbmcgui.ListItem(path=stream_url)
         play_item.setProperty('IsRadio', 'true')
