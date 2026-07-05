@@ -135,7 +135,7 @@ def main():
         {"nazov": "Classic Praha", "url": "https://icecast8.play.cz/classic128.mp3", "logo": "https://static.mytuner.mobi/media/tvos_radios/153/classic-praha.a62cf508.png"},
         {"nazov": "Calimeroclub", "url": "http://live.topradio.cz:8000/calimero192", "logo": "https://www.calimeroclub.eu/img/picture/231/logo-cali.jpg"},
         {"nazov": "Audio Kostel", "url": "https://evcast.mediacp.eu:1585/stream", "logo": "https://www.kostel.cz/logo.png"},
-        {"nazov": "Bikers Radio Doupě", "url": "http://icecast7.play.cz/bikersradiodoupe128.mp3", "logo": "https://www.bikersradio.cz/images/logo.png"},
+        {"nazov": "Bikers Radio Doupę", "url": "http://icecast7.play.cz/bikersradiodoupe128.mp3", "logo": "https://www.bikersradio.cz/images/logo.png"},
         {"nazov": "Alternative Times Radio", "url": "http://ice3.abradio.cz/alternative128.mp3", "logo": "https://radia.cz/media/images/0001/01/48cd28c2dab73f011e8e64dc0919ef57a7374883.png"},
         {"nazov": "Astra Rádio", "url": "https://astra.icecast.cz/", "logo": "https://myonlineradio.cz/public/uploads/radio_img/astra-radio/fb_cover.jpg"},
         {"nazov": "Rádio Kiss", "url": "https://n25a-eu.rcs.revma.com/asn0cmvb938uv", "logo": "https://www.kiss.cz/files/design/logo.png"},
