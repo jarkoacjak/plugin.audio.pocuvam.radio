@@ -11,7 +11,7 @@ def main():
     arg_string = sys.argv[2][1:]
     params = dict(urllib.parse.parse_qsl(arg_string))
 
-    # Nastavenie obsahu pre korektné zobrazenie hudobného zoznamu
+    # Nastavenie obsahu na 'songs', čo aktivuje hudobné zobrazenie s logami
     xbmcplugin.setContent(handle, 'songs')
 
     # --- DATABÁZA RÁDIÍ ---
@@ -134,7 +134,7 @@ def main():
         {"nazov": "Color Music Radio", "url": "http://icecast6.play.cz/color192.mp3", "logo": "https://myonlineradio.cz/public/uploads/radio_img/color-music-radio/play_250_250.webp"},
         {"nazov": "Classic Praha", "url": "https://icecast8.play.cz/classic128.mp3", "logo": "https://static.mytuner.mobi/media/tvos_radios/153/classic-praha.a62cf508.png"},
         {"nazov": "Calimeroclub", "url": "http://live.topradio.cz:8000/calimero192", "logo": "https://www.calimeroclub.eu/img/picture/231/logo-cali.jpg"},
-        {"nazov": "Audio Kostel", "url": "https://evcast.mediacp.eu:1585/stream", "logo": "https://www.kostel.cz/logo.png"},
+         {"nazov": "Audio Kostel", "url": "https://evcast.mediacp.eu:1585/stream", "logo": "https://www.kostel.cz/logo.png"},
         {"nazov": "Bikers Radio Doupę", "url": "http://icecast7.play.cz/bikersradiodoupe128.mp3", "logo": "https://www.bikersradio.cz/images/logo.png"},
         {"nazov": "Alternative Times Radio", "url": "http://ice3.abradio.cz/alternative128.mp3", "logo": "https://radia.cz/media/images/0001/01/48cd28c2dab73f011e8e64dc0919ef57a7374883.png"},
         {"nazov": "Astra Rádio", "url": "https://astra.icecast.cz/", "logo": "https://myonlineradio.cz/public/uploads/radio_img/astra-radio/fb_cover.jpg"},
@@ -174,10 +174,9 @@ def main():
         for radio in vybrane_radia:
             logo_url = radio['logo'] + '|User-Agent=Mozilla/5.0'
             
-            # 1. Základný text položky
             li = xbmcgui.ListItem(label=radio['nazov'])
             
-            # 2. Nastavenie všetkých grafických vrstiev vrátane pozadia a plagátu
+            # Priradenie grafiky do všetkých možných typov vrstiev, aby skin nemal dôvod ikonu skryť
             li.setArt({
                 'thumb': logo_url,
                 'icon': logo_url,
@@ -186,30 +185,34 @@ def main():
                 'fanart': logo_url
             })
             
-            # 3. KOMPLETNÉ ODSTRÁNENIE ZDVOJENÝCH TEXTOV (Vyčistenie Artist/Album tagov)
+            # KĽÚČOVÁ ZMENA PRE UKÁZANIE LOGA V RIADKU: 
+            # Cez getMusicInfoTag nastavíme trvanie na nenulovú hodnotu a priradíme typ "song".
+            # Kodi vtedy položku rozpozná ako regulárnu stopu a skin hneď zobrazí štvorcové logo na začiatku riadku.
+            # Zároveň nastavujeme prázdne reťazce (' '), čo spoľahlivo vymaže texty pod veľkým logom.
             try:
                 info = li.getMusicInfoTag()
                 info.setTitle(radio['nazov'])
-                info.setArtist('')
-                info.setAlbum('')
+                info.setArtist(' ')
+                info.setAlbum(' ')
+                info.setTrack(1)
+                info.setDuration(1)  # Aktivácia vykreslenia štvorcových ikon
             except AttributeError:
                 li.setInfo('music', {
                     'title': radio['nazov'],
-                    'artist': '',
-                    'album': ''
+                    'artist': ' ',
+                    'album': ' ',
+                    'track': 1,
+                    'duration': 1
                 })
             
             li.setProperty('IsPlayable', 'true')
             li.setProperty('IsRadio', 'true')
             
             play_url = build_url({'action': 'play', 'url': radio['url']})
-            
-            # KĽÚČOVÁ OPRAVA: Pre odovzdanie loga do riadkov zoznamu (Estuary skin a pod.) 
-            # musíme priradiť logo aj priamo do volania pridania položky.
             xbmcplugin.addDirectoryItem(handle, play_url, li, isFolder=False)
 
     elif action == 'play':
-        # BEZPEČNÉ ODOSLANIE ADRESY STREAMU DO INTERNÉHO PREHRÁVAČA KODI
+        # PREHRÁVANIE STREAMU
         stream_url = params.get('url')
         play_item = xbmcgui.ListItem(path=stream_url)
         play_item.setProperty('IsRadio', 'true')
