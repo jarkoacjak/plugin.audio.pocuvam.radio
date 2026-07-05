@@ -11,8 +11,9 @@ def main():
     arg_string = sys.argv[2][1:]
     params = dict(urllib.parse.parse_qsl(arg_string))
 
-    # Nastavenie obsahu na 'songs', čo aktivuje hudobné zobrazenie s logami
-    xbmcplugin.setContent(handle, 'songs')
+    # Prepnutie na čisté zobrazenie súborov, ktoré nevyžaduje žiadne trvanie/dobu skladby
+    # a pritom zachováva zobrazenie malých štvorcových ikon vedľa názvov
+    xbmcplugin.setContent(handle, 'files')
 
     # --- DATABÁZA RÁDIÍ ---
     radia_sk = [
@@ -134,7 +135,7 @@ def main():
         {"nazov": "Color Music Radio", "url": "http://icecast6.play.cz/color192.mp3", "logo": "https://myonlineradio.cz/public/uploads/radio_img/color-music-radio/play_250_250.webp"},
         {"nazov": "Classic Praha", "url": "https://icecast8.play.cz/classic128.mp3", "logo": "https://static.mytuner.mobi/media/tvos_radios/153/classic-praha.a62cf508.png"},
         {"nazov": "Calimeroclub", "url": "http://live.topradio.cz:8000/calimero192", "logo": "https://www.calimeroclub.eu/img/picture/231/logo-cali.jpg"},
-         {"nazov": "Audio Kostel", "url": "https://evcast.mediacp.eu:1585/stream", "logo": "https://www.kostel.cz/logo.png"},
+        {"nazov": "Audio Kostel", "url": "https://evcast.mediacp.eu:1585/stream", "logo": "https://www.kostel.cz/logo.png"},
         {"nazov": "Bikers Radio Doupę", "url": "http://icecast7.play.cz/bikersradiodoupe128.mp3", "logo": "https://www.bikersradio.cz/images/logo.png"},
         {"nazov": "Alternative Times Radio", "url": "http://ice3.abradio.cz/alternative128.mp3", "logo": "https://radia.cz/media/images/0001/01/48cd28c2dab73f011e8e64dc0919ef57a7374883.png"},
         {"nazov": "Astra Rádio", "url": "https://astra.icecast.cz/", "logo": "https://myonlineradio.cz/public/uploads/radio_img/astra-radio/fb_cover.jpg"},
@@ -176,7 +177,7 @@ def main():
             
             li = xbmcgui.ListItem(label=radio['nazov'])
             
-            # Priradenie grafiky do všetkých možných typov vrstiev, aby skin nemal dôvod ikonu skryť
+            # Kompletné naplnenie grafických ciest pre veľké aj malé logá bez výnimky
             li.setArt({
                 'thumb': logo_url,
                 'icon': logo_url,
@@ -185,25 +186,12 @@ def main():
                 'fanart': logo_url
             })
             
-            # KĽÚČOVÁ ZMENA PRE UKÁZANIE LOGA V RIADKU: 
-            # Cez getMusicInfoTag nastavíme trvanie na nenulovú hodnotu a priradíme typ "song".
-            # Kodi vtedy položku rozpozná ako regulárnu stopu a skin hneď zobrazí štvorcové logo na začiatku riadku.
-            # Zároveň nastavujeme prázdne reťazce (' '), čo spoľahlivo vymaže texty pod veľkým logom.
-            try:
-                info = li.getMusicInfoTag()
-                info.setTitle(radio['nazov'])
-                info.setArtist(' ')
-                info.setAlbum(' ')
-                info.setTrack(1)
-                info.setDuration(1)  # Aktivácia vykreslenia štvorcových ikon
-            except AttributeError:
-                li.setInfo('music', {
-                    'title': radio['nazov'],
-                    'artist': ' ',
-                    'album': ' ',
-                    'track': 1,
-                    'duration': 1
-                })
+            # Odstránenie nežiaducich textov pod veľkým logom použitím prázdnych stringov
+            # Bez pridávania parametrov času/doby skladby
+            li.setInfo('video', {
+                'title': radio['nazov'],
+                'plot': ''
+            })
             
             li.setProperty('IsPlayable', 'true')
             li.setProperty('IsRadio', 'true')
@@ -212,7 +200,7 @@ def main():
             xbmcplugin.addDirectoryItem(handle, play_url, li, isFolder=False)
 
     elif action == 'play':
-        # PREHRÁVANIE STREAMU
+        # SPUSTENIE PREHRÁVANIA STREAMU
         stream_url = params.get('url')
         play_item = xbmcgui.ListItem(path=stream_url)
         play_item.setProperty('IsRadio', 'true')
