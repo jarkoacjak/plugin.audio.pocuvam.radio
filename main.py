@@ -11,7 +11,7 @@ def main():
     arg_string = sys.argv[2][1:]
     params = dict(urllib.parse.parse_qsl(arg_string))
 
-    # Nastavenie obsahu na 'songs' pre kompletnú podporu živých hudobných metadát a ikony stavu prehrávania
+    # Nastavenie obsahu pre správne zobrazenie hudobného zoznamu
     xbmcplugin.setContent(handle, 'songs')
 
     # --- DATABÁZA RÁDIÍ ---
@@ -134,6 +134,7 @@ def main():
         {"nazov": "Color Music Radio", "url": "http://icecast6.play.cz/color192.mp3", "logo": "https://myonlineradio.cz/public/uploads/radio_img/color-music-radio/play_250_250.webp"},
         {"nazov": "Classic Praha", "url": "https://icecast8.play.cz/classic128.mp3", "logo": "https://static.mytuner.mobi/media/tvos_radios/153/classic-praha.a62cf508.png"},
         {"nazov": "Calimeroclub", "url": "http://live.topradio.cz:8000/calimero192", "logo": "https://www.calimeroclub.eu/img/picture/231/logo-cali.jpg"},
+        {"nazov": "Calimeroclub", "url": "http://live.topradio.cz:8000/calimero192", "logo": "https://www.calimeroclub.eu/img/picture/231/logo-cali.jpg"},
         {"nazov": "Audio Kostel", "url": "https://evcast.mediacp.eu:1585/stream", "logo": "https://www.kostel.cz/logo.png"},
         {"nazov": "Bikers Radio Doupę", "url": "http://icecast7.play.cz/bikersradiodoupe128.mp3", "logo": "https://www.bikersradio.cz/images/logo.png"},
         {"nazov": "Alternative Times Radio", "url": "http://ice3.abradio.cz/alternative128.mp3", "logo": "https://radia.cz/media/images/0001/01/48cd28c2dab73f011e8e64dc0919ef57a7374883.png"},
@@ -149,8 +150,9 @@ def main():
     action = params.get('action')
 
     if action is None:
+        # HLAVNÉ MENU (Opravené padanie odstránením nepovolených argumentov z ListItem)
         url_sk = build_url({'action': 'list', 'country': 'sk'})
-        li_sk = xbmcgui.ListItem(label='[B][COLOR yellow]Hudba:[/COLOR] 🇸🇰 Slovenské rádiá[/B]', thumbnailImage='https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Flag_of_Slovakia.svg/250px-Flag_of_Slovakia.svg.png')
+        li_sk = xbmcgui.ListItem(label='[B][COLOR yellow]Hudba:[/COLOR] 🇸🇰 Slovenské rádiá[/B]')
         li_sk.setArt({
             'icon': 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Flag_of_Slovakia.svg/250px-Flag_of_Slovakia.svg.png',
             'thumb': 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Flag_of_Slovakia.svg/250px-Flag_of_Slovakia.svg.png'
@@ -158,7 +160,7 @@ def main():
         xbmcplugin.addDirectoryItem(handle, url_sk, li_sk, isFolder=True)
 
         url_cz = build_url({'action': 'list', 'country': 'cz'})
-        li_cz = xbmcgui.ListItem(label='[B][COLOR yellow]Hudba:[/COLOR] 🇨🇿 České rádiá[/B]', thumbnailImage='https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Flag_of_the_Czech_Republic.svg/250px-Flag_of_the_Czech_Republic.svg.png')
+        li_cz = xbmcgui.ListItem(label='[B][COLOR yellow]Hudba:[/COLOR] 🇨🇿 České rádiá[/B]')
         li_cz.setArt({
             'icon': 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Flag_of_the_Czech_Republic.svg/250px-Flag_of_the_Czech_Republic.svg.png',
             'thumb': 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Flag_of_the_Czech_Republic.svg/250px-Flag_of_the_Czech_Republic.svg.png'
@@ -166,16 +168,14 @@ def main():
         xbmcplugin.addDirectoryItem(handle, url_cz, li_cz, isFolder=True)
 
     elif action == 'list':
+        # ZOZNAM STANÍC
         country = params.get('country')
         vybrane_radia = radia_sk if country == 'sk' else radia_cz
 
         for radio in vybrane_radia:
             logo_url = radio['logo'] + '|User-Agent=Mozilla/5.0'
             
-            # Priradenie loga priamo cez thumbnailImage vynúti malé ikony v riadkoch zoznamu pre všetky skiny
-            li = xbmcgui.ListItem(label=radio['nazov'], thumbnailImage=logo_url)
-            
-            # Kompletná súprava pre zobrazenie grafiky (Cover, OSD, Info panely)
+            li = xbmcgui.ListItem(label=radio['nazov'])
             li.setArt({
                 'icon': logo_url,
                 'thumb': logo_url,
@@ -183,11 +183,35 @@ def main():
                 'banner': logo_url
             })
             
-            # Ponechanie vlastností pre správnu identifikáciu streamu a preberanie živých informácií (názov pesničky / interpret)
+            # Vyčistenie a vyplnenie prázdnych statických hodnôt (Oprava zdvojených nápisov na obrázku 2)
+            # Týmto povieme Kodi, nech neberie názov stanice ako speváka/album, ale nech čaká na živý ICY stream.
+            try:
+                info = li.getMusicInfoTag()
+                info.setTitle(radio['nazov'])
+                info.setArtist('')
+                info.setAlbum('')
+                info.setComment('Živé internetové vysielanie')  # Vyrieši „Nie sú k dispozícii žiadne informácie“ na obrázku 1
+            except AttributeError:
+                li.setInfo('music', {
+                    'title': radio['nazov'],
+                    'artist': '',
+                    'album': '',
+                    'comment': 'Živé internetové vysielanie'
+                })
+            
             li.setProperty('IsPlayable', 'true')
             li.setProperty('IsRadio', 'true')
             
-            xbmcplugin.addDirectoryItem(handle, radio['url'], li, isFolder=False)
+            # Oprava smerovania: Položka odkazuje na akciu 'play' vnútri doplnku, aby Kodi vedelo správne preberať ICY metadáta skladieb
+            play_url = build_url({'action': 'play', 'url': radio['url']})
+            xbmcplugin.addDirectoryItem(handle, play_url, li, isFolder=False)
+
+    elif action == 'play':
+        # BEZPEČNÉ ODOVZDANIE STREAMU PREHRÁVAČU (Oprava zlyhania z videa)
+        stream_url = params.get('url')
+        play_item = xbmcgui.ListItem(path=stream_url)
+        play_item.setProperty('IsRadio', 'true')
+        xbmcplugin.setResolvedUrl(handle, True, play_item)
 
     xbmcplugin.endOfDirectory(handle)
 
