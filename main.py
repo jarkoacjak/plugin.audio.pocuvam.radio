@@ -11,7 +11,7 @@ def main():
     arg_string = sys.argv[2][1:]
     params = dict(urllib.parse.parse_qsl(arg_string))
 
-    # Nastavenie obsahu pre správne zobrazenie hudobného zoznamu
+    # Nastavenie obsahu na 'songs' pre podporu živých metadát
     xbmcplugin.setContent(handle, 'songs')
 
     # --- DATABÁZA RÁDIÍ ---
@@ -134,7 +134,6 @@ def main():
         {"nazov": "Color Music Radio", "url": "http://icecast6.play.cz/color192.mp3", "logo": "https://myonlineradio.cz/public/uploads/radio_img/color-music-radio/play_250_250.webp"},
         {"nazov": "Classic Praha", "url": "https://icecast8.play.cz/classic128.mp3", "logo": "https://static.mytuner.mobi/media/tvos_radios/153/classic-praha.a62cf508.png"},
         {"nazov": "Calimeroclub", "url": "http://live.topradio.cz:8000/calimero192", "logo": "https://www.calimeroclub.eu/img/picture/231/logo-cali.jpg"},
-        {"nazov": "Calimeroclub", "url": "http://live.topradio.cz:8000/calimero192", "logo": "https://www.calimeroclub.eu/img/picture/231/logo-cali.jpg"},
         {"nazov": "Audio Kostel", "url": "https://evcast.mediacp.eu:1585/stream", "logo": "https://www.kostel.cz/logo.png"},
         {"nazov": "Bikers Radio Doupę", "url": "http://icecast7.play.cz/bikersradiodoupe128.mp3", "logo": "https://www.bikersradio.cz/images/logo.png"},
         {"nazov": "Alternative Times Radio", "url": "http://ice3.abradio.cz/alternative128.mp3", "logo": "https://radia.cz/media/images/0001/01/48cd28c2dab73f011e8e64dc0919ef57a7374883.png"},
@@ -150,7 +149,7 @@ def main():
     action = params.get('action')
 
     if action is None:
-        # HLAVNÉ MENU (Opravené padanie odstránením nepovolených argumentov z ListItem)
+        # HLAVNÉ MENU (Slovenské / České rádiá)
         url_sk = build_url({'action': 'list', 'country': 'sk'})
         li_sk = xbmcgui.ListItem(label='[B][COLOR yellow]Hudba:[/COLOR] 🇸🇰 Slovenské rádiá[/B]')
         li_sk.setArt({
@@ -175,22 +174,24 @@ def main():
         for radio in vybrane_radia:
             logo_url = radio['logo'] + '|User-Agent=Mozilla/5.0'
             
+            # Vytvorenie čistého ListItem (Kodi 20/21 kompatibilita)
             li = xbmcgui.ListItem(label=radio['nazov'])
+            
+            # PRIDANIE LOGA: Kľúč 'thumb' vnútri setArt zaisťuje vykreslenie malej ikony na začiatku každého riadku zoznamu
             li.setArt({
-                'icon': logo_url,
                 'thumb': logo_url,
+                'icon': logo_url,
                 'poster': logo_url,
                 'banner': logo_url
             })
             
-            # Vyčistenie a vyplnenie prázdnych statických hodnôt (Oprava zdvojených nápisov na obrázku 2)
-            # Týmto povieme Kodi, nech neberie názov stanice ako speváka/album, ale nech čaká na živý ICY stream.
+            # Správne vyčistenie statických hodnôt metadát, aby sa nezdvojovali texty
             try:
                 info = li.getMusicInfoTag()
                 info.setTitle(radio['nazov'])
                 info.setArtist('')
                 info.setAlbum('')
-                info.setComment('Živé internetové vysielanie')  # Vyrieši „Nie sú k dispozícii žiadne informácie“ na obrázku 1
+                info.setComment('Živé internetové vysielanie')
             except AttributeError:
                 li.setInfo('music', {
                     'title': radio['nazov'],
@@ -202,12 +203,12 @@ def main():
             li.setProperty('IsPlayable', 'true')
             li.setProperty('IsRadio', 'true')
             
-            # Oprava smerovania: Položka odkazuje na akciu 'play' vnútri doplnku, aby Kodi vedelo správne preberať ICY metadáta skladieb
+            # Smerovanie cez akciu 'play' pre zachovanie ICY metadát (názov piesne)
             play_url = build_url({'action': 'play', 'url': radio['url']})
             xbmcplugin.addDirectoryItem(handle, play_url, li, isFolder=False)
 
     elif action == 'play':
-        # BEZPEČNÉ ODOVZDANIE STREAMU PREHRÁVAČU (Oprava zlyhania z videa)
+        # BEZPEČNÉ SPUSTENIE PREHRÁVANIA
         stream_url = params.get('url')
         play_item = xbmcgui.ListItem(path=stream_url)
         play_item.setProperty('IsRadio', 'true')
