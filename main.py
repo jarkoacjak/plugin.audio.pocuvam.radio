@@ -11,8 +11,7 @@ def main():
     arg_string = sys.argv[2][1:]
     params = dict(urllib.parse.parse_qsl(arg_string))
 
-    # Ponechávame hudobný režim 'songs', aby Kodi správne spracovávalo stream,
-    # zobrazovalo malé logá rádií v riadkoch a načítavalo živé metadáta (autor/pesnička hore)
+    # Ponechávame režim 'songs' kvôli zachovaniu živých metadát (autor a song hore)
     xbmcplugin.setContent(handle, 'songs')
 
     # --- DATABÁZA RÁDIÍ ---
@@ -177,23 +176,28 @@ def main():
             
             li = xbmcgui.ListItem(label=radio['nazov'])
             
-            # Nastavujeme logá – 'icon' vykreslí malé logo priamo do zoznamu (odstráni prázdny štvorček),
-            # a 'thumb' vykreslí veľké štvorcové logo na ľavú stranu.
+            # Zapíšeme logo do všetkých existujúcich obrazových atribútov, 
+            # čím prebijeme vnútorné nastavenia skinu Kodi pre zobrazenie loga v riadkoch
             li.setArt({
+                'thumb': logo_url,
                 'icon': logo_url,
-                'thumb': logo_url
+                'logo': logo_url,
+                'clearlogo': logo_url,
+                'poster': logo_url
             })
             
-            # SKRYTIE STATICKÉHO TEXTU NAĽAVO BEZ BLOKOVANIA ŽIVÝCH METADÁT:
-            # Tým, že do setInfo alebo cez music tag nezadáme žiadneho napevno napísaného autora (artist), 
-            # Kodi v zozname skryje nápis "Nie sú k dispozícii informácie". 
-            # Akonáhle však rádio spustíš, živý stream začne posielať reálne dáta a autor s pesničkou sa hore objavia!
+            # Týmto vyčistíme statické texty naľavo, ale nenaštrbíme stream, 
+            # takže živé dáta o songu hore po spustení bez problémov naskočia
             try:
                 info = li.getMusicInfoTag()
                 info.setTitle(radio['nazov'])
+                info.setArtist("")
+                info.setAlbum("")
             except AttributeError:
                 li.setInfo('music', {
-                    'title': radio['nazov']
+                    'title': radio['nazov'],
+                    'artist': '',
+                    'album': ''
                 })
             
             li.setProperty('IsPlayable', 'true')
