@@ -54,7 +54,7 @@ def main():
     action = params.get('action')
     user_data = load_user_data()
 
-    # --- DATABÁZA RÁDIÍ (Pôvodná zachovaná) ---
+    # --- DATABÁZA RÁDIÍ ---
     radia_sk = [
         {"nazov": "Moveit Rádio", "url": "https://play.radiosebastian.eu/listen/moveitradiosk/radio.mp3", "logo": "https://myonlineradio.sk/public/uploads/radio_img/moveit-radio/play_250_250.webp"},
         {"nazov": "Fun Rádio Leto", "url": "https://stream.funradio.sk:8000/summer128.mp3", "logo": "https://cdn.radia.sk/_radia/loga/app/fun-letne-hity.webp?v=11"},
@@ -243,7 +243,7 @@ def main():
         add_safe_folder("🌍 Štáty", {'action': 'submenu_states'})
         add_safe_folder("🆕 Najnovšie pridané", {'action': 'latest_added'})
         add_safe_folder("⭐ Obľúbené", {'action': 'favorites_menu'})
-        add_safe_folder("🔍 Vyhľadavanie", {'action': 'search'})
+        add_safe_folder("🔍 Vyhľadavanie", {'action': 'search_trigger'})
 
     elif action == 'submenu_states':
         add_safe_folder("🇸🇰 Slovenské rádiá", {'action': 'list_db', 'country': 'sk'}, "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Flag_of_Slovakia.svg/250px-Flag_of_Slovakia.svg.png")
@@ -275,7 +275,7 @@ def main():
         add_safe_folder("📁 Môj zoznam", {'action': 'my_list'})
 
     elif action == 'my_list':
-        add_safe_folder("➕ Pridať vlastnú stanicu", {'action': 'add_custom_trigger'})
+        add_safe_folder("➕ Pridať vlastnú stanicu", {'action': 'add_custom'})
         for radio in user_data.get("custom", []):
             li = create_radio_item(radio, "Vlastná stanica")
             rem_url = build_url({'action': 'remove_item', 'url': radio['url']})
@@ -317,32 +317,47 @@ def main():
         save_user_data(user_data)
         xbmcgui.Dialog().notification("Odstránené", "Stanica bola vymazaná.", xbmcgui.NOTIFICATION_INFO, 2000)
         xbmc.executebuiltin("Container.Refresh")
+        return
 
-    # --- OPRAVENÉ PRIDÁVANIE STANICE ---
-    elif action == 'add_custom_trigger':
-        kb = xbmcgui.DialogKeyboard('', 'Zadaj názov tvojho rádia')
+    # --- BEZPEČNÝ SPÚŠŤAČ PRE PRIDÁVANIE ---
+    elif action == 'add_custom':
+        # Dokončíme generovanie okna aby Kodi nezamrzlo
+        xbmcplugin.endOfDirectory(handle, succeeded=True)
+        
+        kb = xbmcgui.DialogKeyboard('', 'Zadaj názov rádia')
         kb.doModal()
-        if kb.isConfirmed() and kb.getText():
+        if kb.isConfirmed():
             name = kb.getText()
-            kb_url = xbmcgui.DialogKeyboard('', 'Vlož alebo napíš presnú URL streamu (.mp3/.aac...)')
-            kb_url.doModal()
-            if kb_url.isConfirmed() and kb_url.getText():
-                stream_url = kb_url.getText()
-                new_custom = {"nazov": "[Vlastné] " + name, "url": stream_url, "logo": ""}
-                if "custom" not in user_data:
-                    user_data["custom"] = []
-                user_data["custom"].append(new_custom)
-                save_user_data(user_data)
-                xbmcgui.Dialog().ok("Hotovo", f"Rádio '{name}' bolo úspešne uložené!")
+            if name:
+                kb_url = xbmcgui.DialogKeyboard('', 'Vlož presnú URL adresu streamu')
+                kb_url.doModal()
+                if kb_url.isConfirmed():
+                    stream_url = kb_url.getText()
+                    if stream_url:
+                        new_custom = {"nazov": "[Vlastné] " + name, "url": stream_url, "logo": ""}
+                        if "custom" not in user_data:
+                            user_data["custom"] = []
+                        user_data["custom"].append(new_custom)
+                        save_user_data(user_data)
+                        xbmcgui.Dialog().ok("Úspech", f"Rádio '{name}' bolo pridané!")
+                        
+        # Osviežime zobrazenie priečinka Môj zoznam
         xbmc.executebuiltin("Container.Refresh")
+        return
 
-    # --- OPRAVENÉ VYHĽADÁVANIE ---
-    elif action == 'search':
-        kb = xbmcgui.DialogKeyboard('', 'Čo chceš počúvať?')
+    # --- BEZPEČNÝ SPÚŠŤAČ PRE VYHĽADÁVANIE ---
+    elif action == 'search_trigger':
+        # Dokončíme generovanie adresára
+        xbmcplugin.endOfDirectory(handle, succeeded=True)
+        
+        kb = xbmcgui.DialogKeyboard('', 'Čo chceš vyhľadať?')
         kb.doModal()
-        if kb.isConfirmed() and kb.getText():
+        if kb.isConfirmed():
             search_query = kb.getText()
-            xbmc.executebuiltin(f"ActivateWindow(Videos,{build_url({'action': 'search_results', 'query': search_query})})")
+            if search_query:
+                # Načítame výsledky priamo do aktívneho zobrazenia bez zlyhania
+                xbmc.executebuiltin(f"Container.Update({build_url({'action': 'search_results', 'query': search_query})})")
+        return
 
     elif action == 'play':
         stream_url = params.get('url')
@@ -364,6 +379,7 @@ def main():
             pass
             
         xbmcplugin.setResolvedUrl(handle, True, play_item)
+        return
 
     xbmcplugin.endOfDirectory(handle, succeeded=True)
 
