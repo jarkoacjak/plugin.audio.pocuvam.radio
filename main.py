@@ -204,7 +204,7 @@ def main():
         logo_url = radio['logo'] + '|User-Agent=Mozilla/5.0' if radio.get('logo') else "DefaultAudio.png"
         li = xbmcgui.ListItem(label=radio['nazov'])
         
-        # Kompletné nastavenie všetkých parametrov obrázkov pre skin
+        # Kompletné a bezpečné naviazanie loga pre bočný náhľad aj pre riadkový zoznam (ikonky)
         li.setArt({
             'thumb': logo_url,
             'icon': logo_url,
@@ -213,17 +213,17 @@ def main():
             'poster': logo_url
         })
         
-        # Vyplnenie metadát kategórie (upraví prázdne popisy)
+        # Vloženie tagov kategórie zabraňuje zobrazeniu "Nie sú k dispozícii žiadne informácie"
         try:
             info = li.getMusicInfoTag()
             info.setTitle(radio['nazov'])
             info.setArtist([category_name])
-            info.setAlbum("Slovenská republika" if "sk" in category_name.lower() else "Česká republika")
+            info.setAlbum("Živé internetové vysielanie")
         except AttributeError:
             li.setInfo('music', {
                 'title': radio['nazov'],
                 'artist': [category_name],
-                'album': "Živé vysielanie"
+                'album': "Živé internetové vysielanie"
             })
             
         li.setProperty('IsPlayable', 'true')
@@ -245,7 +245,7 @@ def main():
     elif action == 'submenu_states':
         def add_state_item(label, flag_url, query, is_folder=True):
             li = xbmcgui.ListItem(label=f"[B]{label}[/B]")
-            li.setArt({'icon': flag_url, 'thumb': flag_url})
+            li.setArt({'icon': flag_url, 'thumb': flag_url, 'logo': flag_url})
             xbmcplugin.addDirectoryItem(handle, build_url(query), li, isFolder=is_folder)
 
         add_state_item("🇸🇰 Slovenské rádiá", "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Flag_of_Slovakia.svg/250px-Flag_of_Slovakia.svg.png", {'action': 'list_db', 'country': 'sk'})
