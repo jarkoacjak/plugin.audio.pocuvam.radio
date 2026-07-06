@@ -163,6 +163,8 @@ def main():
     ]
 
     radia_cz = [
+        {"nazov": "ČRo Karlovy Vary", "url": "https://rozhlas.stream/karlovy_vary_high.aac", "logo": "https://www.boheminium.cz/wp-content/uploads/2015/08/CRo-KV.jpg"},
+        {"nazov": "ČRo Liberec", "url": "https://rozhlas.stream/liberec_high.aac", "logo": "https://radia-online.com/files/styles/180/public/logo/cesky-rozhlas-liberec.jpg"},
         {"nazov": "ČRo Hradec Králové", "url": "https://rozhlas.stream/hradec_kralove_high.aac", "logo": "https://radia-online.com/files/styles/180/public/logo/cesky-rozhlas-hradec-kralove.jpg"},
         {"nazov": "ČRo Jazz", "url": "https://rozhlas.stream/jazz_low.aac", "logo": "https://cdn.sanity.io/images/orhkaa59/production/6919323d4e82d622ee98c9284aa724f54b794a39-300x300.png"},
         {"nazov": "ČRo D-dur", "url": "https://rozhlas.stream/ddur_high.aac", "logo": "https://cdn.sanity.io/images/orhkaa59/production/9a9327849aa30ac0b43a91a77da8ad9c0289519d-300x300.png"},
@@ -334,9 +336,7 @@ def main():
         xbmcgui.Dialog().notification("Odstránené", "Stanica bola vymazaná.", xbmcgui.NOTIFICATION_INFO, 2000)
         xbmc.executebuiltin("Container.Refresh")
 
-    # --- SÚČASŤ OPRAVY: PRIDÁVANIE VLASTNÝCH STANÍC ---
     elif action == 'add_custom':
-        # Ihneď uvoľníme Kodi adresár, aby sa nezaseklo načítavanie
         xbmcplugin.endOfDirectory(handle, succeeded=True)
         
         kb = xbmcgui.DialogKeyboard('', 'Zadaj názov rádia')
@@ -354,19 +354,15 @@ def main():
                 save_user_data(user_data)
                 xbmcgui.Dialog().notification("Úspech", f"Rádio '{name}' pridané!", xbmcgui.NOTIFICATION_INFO, 2500)
         
-        # Osviežime zobrazenie priečinka, aby sa nové rádio hneď objavilo
         xbmc.executebuiltin("Container.Refresh")
 
-    # --- SÚČASŤ OPRAVY: VYHĽADÁVANIE ---
     elif action == 'search_trigger':
-        # Ihneď uvoľníme Kodi adresár
         xbmcplugin.endOfDirectory(handle, succeeded=True)
         
         kb = xbmcgui.DialogKeyboard('', 'Čo chceš vyhľadať?')
         kb.doModal()
         if kb.isConfirmed() and kb.getText():
             search_query = kb.getText()
-            # Správna aktualizácia kontajnera namiesto prekrývania pluginov
             xbmc.executebuiltin(f"Container.Update({build_url({'action': 'search_results', 'query': search_query})})")
 
     elif action == 'play':
