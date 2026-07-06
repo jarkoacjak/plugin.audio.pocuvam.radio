@@ -229,7 +229,6 @@ def main():
         return li
 
     def add_safe_folder(label, query, icon="DefaultFolder.png"):
-        # Táto funkcia generuje priečinky s kompletnými informáciami, čím natvrdo zamedzí chybám Kodi
         li = xbmcgui.ListItem(label=f"[B]{label}[/B]")
         li.setArt({'icon': icon, 'thumb': icon, 'logo': icon, 'poster': icon})
         try:
@@ -250,7 +249,6 @@ def main():
         add_safe_folder("🇸🇰 Slovenské rádiá", {'action': 'list_db', 'country': 'sk'}, "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Flag_of_Slovakia.svg/250px-Flag_of_Slovakia.svg.png")
         add_safe_folder("🇨🇿 České rádiá", {'action': 'list_db', 'country': 'cz'}, "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Flag_of_the_Czech_Republic.svg/250px-Flag_of_the_Czech_Republic.svg.png")
         
-        # Priečinok pre Maďarsko upravený tak, aby nevyvolal prázdnu odozvu
         li_hu = xbmcgui.ListItem(label="[B]🇭🇺 Maďarské rádiá[/B]")
         li_hu.setArt({'icon': "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Flag_of_Hungary.svg/250px-Flag_of_Hungary.svg.png"})
         try:
