@@ -11,7 +11,7 @@ import xbmcvfs
 def build_url(query):
     return sys.argv[0] + '?' + urllib.parse.urlencode(query)
 
-# Správa databázy vlastných a obľúbených staníc
+# Správa databázy vlastných staníc
 def get_db_path():
     profile_path = xbmcvfs.translatePath(xbmcaddon.Addon().getAddonInfo('profile'))
     if not xbmcvfs.exists(profile_path):
@@ -26,7 +26,7 @@ def load_user_data():
                 return json.load(f)
         except:
             pass
-    return {"favorites": [], "custom": []}
+    return {"custom": []}
 
 def save_user_data(data):
     db_path = get_db_path()
@@ -85,7 +85,7 @@ def main():
         {"nazov": "Rádio Pokoj", "url": "http://radioserver.online:8822/;", "logo": "https://cdn.radia.sk/_radia/loga/app/pokoj.webp?v=2"},
         {"nazov": "Rádio Piešťany", "url": "https://solid33.streamupsolutions.com/proxy/gktiemqb/stream", "logo": "https://myonlineradio.sk/public/uploads/radio_img/radio-piestany/play_250_250.webp"},
         {"nazov": "Rádio Pohoda", "url": "https://audio.radiopohoda.com:8000/stream", "logo": "https://myonlineradio.sk/public/uploads/radio_img/radio-pohoda/fb_cover.jpg"},
-        {"nazov": "Rádio Paráda", "url": "https://extra.mediacp.eu/stream/RadioParada,o.z.", "logo": "https://www.radioparada.sk/wp-content/uploads/2021/12/LOGO-PARADA-NEW-1024x1024.png"},
+        {"nazov": "Rádio Paráda", "url": "https://extra.mediacp.eu/stream/RadioParada,o.z.", "logo": "https://www.radiaparada.sk/wp-content/uploads/2021/12/LOGO-PARADA-NEW-1024x1024.png"},
         {"nazov": "Rádio Patria", "url": "https://icecast.stv.livebox.sk/patria_128.mp3", "logo": "https://upload.wikimedia.org/wikipedia/commons/8/85/R%C3%A1dio_PATRIA_LOGO.jpg"},
         {"nazov": "Rádio Modra", "url": "http://185.98.208.12:8000/;", "logo": "https://cdn.radia.sk/_radia/loga/coverflow/modra.png"},
         {"nazov": "Rádio PaF", "url": "https://node-23.zeno.fm/92cv04cggfhvv", "logo": "https://cdn.radia.sk/_radia/loga/coverflow/paf.png"},
@@ -201,6 +201,38 @@ def main():
     action = params.get('action')
     user_data = load_user_data()
 
+    # Pomocná funkcia na vytvorenie ListItemu s plnou podporou loga a informácií
+    def create_radio_item(radio, category_name="Internetové rádio"):
+        logo_url = radio['logo'] + '|User-Agent=Mozilla/5.0' if radio.get('logo') else "DefaultAudio.png"
+        li = xbmcgui.ListItem(label=radio['nazov'])
+        
+        # Nastavenie všetkých grafických vrstiev vrátane ikony pre riadkový zoznam
+        li.setArt({
+            'thumb': logo_url, 
+            'icon': logo_url, 
+            'logo': logo_url, 
+            'clearlogo': logo_url, 
+            'poster': logo_url,
+            'banner': logo_url
+        })
+        
+        # Vyplnenie tagov, aby nezobrazovalo hlášku "Nie sú dostupné žiadne informácie"
+        try:
+            info = li.getMusicInfoTag()
+            info.setTitle(radio['nazov'])
+            info.setArtist([category_name])
+            info.setAlbum("Počúvam rádio")
+        except AttributeError:
+            li.setInfo('music', {
+                'title': radio['nazov'],
+                'artist': [category_name],
+                'album': "Počúvam rádio"
+            })
+            
+        li.setProperty('IsPlayable', 'true')
+        li.setProperty('IsRadio', 'true')
+        return li
+
     if action is None:
         # --- HLAVNÉ MENU ---
         def add_menu_item(label, query, icon=""):
@@ -210,6 +242,7 @@ def main():
             xbmcplugin.addDirectoryItem(handle, build_url(query), li, isFolder=True)
 
         add_menu_item("🌍 Štáty", {'action': 'submenu_states'})
+        add_menu_item("🆕 Najnovšie pridané", {'action': 'latest_added'})
         add_menu_item("⭐ Obľúbené (Môj zoznam)", {'action': 'my_list'})
         add_menu_item("🔍 Vyhľadávanie", {'action': 'search'})
 
@@ -225,113 +258,76 @@ def main():
         add_state_item("🇭🇺 Maďarské rádiá", "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Flag_of_Hungary.svg/250px-Flag_of_Hungary.svg.png", {'action': 'hungary_info'}, is_folder=False)
 
     elif action == 'hungary_info':
-        # --- INFO OKNO: MAĎARSKO ---
         xbmcgui.Dialog().ok("Informácia", "Pripravujeme...")
         xbmcplugin.endOfDirectory(handle, succeeded=False)
         return
 
+    elif action == 'latest_added':
+        # --- ZOZNAM: NAJNOVŠIE PRIDANÉ ---
+        najnovsie = radia_sk[-5:] + radia_cz[-5:]
+        najnovsie.reverse()
+
+        for radio in najnovsie:
+            li = create_radio_item(radio, "Najnovšie pridané")
+            play_url = build_url({'action': 'play', 'url': radio['url'], 'nazov': radio['nazov'], 'logo': radio.get('logo', '')})
+            xbmcplugin.addDirectoryItem(handle, play_url, li, isFolder=False)
+
     elif action == 'my_list':
         # --- MENU OBĽÚBENÉ (MÔJ ZOZNAM) ---
-        # 1. Rýchly odkaz: Top 10 SK
         li_sk = xbmcgui.ListItem(label="[B]🔥 Top 10 SK[/B]")
         xbmcplugin.addDirectoryItem(handle, build_url({'action': 'list_static', 'type': 'top_sk'}), li_sk, isFolder=True)
         
-        # 2. Rýchly odkaz: Top 10 CZ
         li_cz = xbmcgui.ListItem(label="[B]💥 Top 10 CZ[/B]")
         xbmcplugin.addDirectoryItem(handle, build_url({'action': 'list_static', 'type': 'top_cz'}), li_cz, isFolder=True)
         
-        # 3. Rýchly odkaz: Pridať vlastnú stanicu
         li_add = xbmcgui.ListItem(label="[B]➕ Pridať vlastnú stanicu[/B]")
         xbmcplugin.addDirectoryItem(handle, build_url({'action': 'add_custom'}), li_add, isFolder=True)
 
-        # 4. Samotné uložené a obľúbené stanice pod tým
-        vybrane_radia = user_data["custom"] + user_data["favorites"]
-        
-        for radio in vybrane_radia:
-            logo_url = radio['logo'] + '|User-Agent=Mozilla/5.0' if radio.get('logo') else "DefaultAudio.png"
-            li = xbmcgui.ListItem(label=radio['nazov'])
-            li.setArt({'thumb': logo_url, 'icon': logo_url, 'logo': logo_url, 'clearlogo': logo_url, 'poster': logo_url})
-            
-            try:
-                info = li.getMusicInfoTag()
-                info.setTitle(radio['nazov'])
-                info.setArtist("")
-                info.setAlbum("")
-            except AttributeError:
-                li.setInfo('music', {'title': radio['nazov'], 'artist': '', 'album': ''})
-                
-            li.setProperty('IsPlayable', 'true')
-            li.setProperty('IsRadio', 'true')
-
-            # Kontextové menu pre vymazanie
+        for radio in user_data["custom"]:
+            li = create_radio_item(radio, "Vlastná stanica")
             rem_url = build_url({'action': 'remove_item', 'url': radio['url']})
-            li.addContextMenuItems([('Odstrániť zo zoznamu', f'RunPlugin({rem_url})')])
+            li.addContextMenuItems([('Odstrániť vlastnú stanicu', f'RunPlugin({rem_url})')])
 
-            play_url = build_url({'action': 'play', 'url': radio['url']})
+            play_url = build_url({'action': 'play', 'url': radio['url'], 'nazov': radio['nazov'], 'logo': radio.get('logo', '')})
             xbmcplugin.addDirectoryItem(handle, play_url, li, isFolder=False)
 
     elif action in ['list_db', 'list_static', 'search_results']:
-        # --- ZOBRAZENIE ŠTÁTOV, TOP VÝBEROV A VYHĽADÁVANIA ---
+        # --- ZOBRAZENIE ZOZNAMOV RÁDIÍ ---
         vybrane_radia = []
+        kat = "Internetové rádio"
         
         if action == 'list_db':
-            vybrane_radia = radia_sk if params.get('country') == 'sk' else radia_cz
+            if params.get('country') == 'sk':
+                vybrane_radia = radia_sk
+                kat = "Slovenské rádiá"
+            else:
+                vybrane_radia = radia_cz
+                kat = "České rádiá"
         elif action == 'list_static':
-            vybrane_radia = top_sk if params.get('type') == 'top_sk' else top_cz
+            if params.get('type') == 'top_sk':
+                vybrane_radia = top_sk
+                kat = "Top 10 SK"
+            else:
+                vybrane_radia = top_cz
+                kat = "Top 10 CZ"
         elif action == 'search_results':
             query_str = params.get('query', '').lower()
             vybrane_radia = [r for r in (radia_sk + radia_cz) if query_str in r['nazov'].lower()]
+            kat = "Výsledky vyhľadávania"
 
         for radio in vybrane_radia:
-            logo_url = radio['logo'] + '|User-Agent=Mozilla/5.0' if radio.get('logo') else "DefaultAudio.png"
-            li = xbmcgui.ListItem(label=radio['nazov'])
-            li.setArt({'thumb': logo_url, 'icon': logo_url, 'logo': logo_url, 'clearlogo': logo_url, 'poster': logo_url})
-            
-            try:
-                info = li.getMusicInfoTag()
-                info.setTitle(radio['nazov'])
-                info.setArtist("")
-                info.setAlbum("")
-            except AttributeError:
-                li.setInfo('music', {'title': radio['nazov'], 'artist': '', 'album': ''})
-            
-            li.setProperty('IsPlayable', 'true')
-            li.setProperty('IsRadio', 'true')
-
-            # Pridávanie do obľúbených cez kontextové menu
-            is_fav = any(f['url'] == radio['url'] for f in user_data["favorites"])
-            is_custom = any(c['url'] == radio['url'] for c in user_data["custom"])
-
-            if not is_fav and not is_custom:
-                fav_url = build_url({'action': 'toggle_fav', 'nazov': radio['nazov'], 'url': radio['url'], 'logo': radio.get('logo', '')})
-                li.addContextMenuItems([('Pridať do Obľúbených rádií', f'RunPlugin({fav_url})')])
-            elif is_fav or is_custom:
-                rem_url = build_url({'action': 'remove_item', 'url': radio['url']})
-                li.addContextMenuItems([('Odstrániť zo zoznamu', f'RunPlugin({rem_url})')])
-
-            play_url = build_url({'action': 'play', 'url': radio['url']})
+            li = create_radio_item(radio, kat)
+            play_url = build_url({'action': 'play', 'url': radio['url'], 'nazov': radio['nazov'], 'logo': radio.get('logo', '')})
             xbmcplugin.addDirectoryItem(handle, play_url, li, isFolder=False)
 
-    elif action == 'toggle_fav':
-        # --- AKCIA: PRIDAŤ DO OBĽÚBENÝCH ---
-        new_fav = {"nazov": params.get('nazov'), "url": params.get('url'), "logo": params.get('logo')}
-        if not any(f['url'] == new_fav['url'] for f in user_data["favorites"]):
-            user_data["favorites"].append(new_fav)
-            save_user_data(user_data)
-            xbmcgui.Dialog().notification("Úspech", f"Rádio {new_fav['nazov']} pridané medzi obľúbené.", xbmcgui.NOTIFICATION_INFO, 2000)
-            xbmc.executebuiltin("Container.Refresh")
-
     elif action == 'remove_item':
-        # --- AKCIA: ODSTRÁNIŤ POLOŽKU ---
         url_to_rem = params.get('url')
-        user_data["favorites"] = [f for f in user_data["favorites"] if f['url'] != url_to_rem]
         user_data["custom"] = [c for c in user_data["custom"] if c['url'] != url_to_rem]
         save_user_data(user_data)
         xbmcgui.Dialog().notification("Odstránené", "Stanica bola vymazaná.", xbmcgui.NOTIFICATION_INFO, 2000)
         xbmc.executebuiltin("Container.Refresh")
 
     elif action == 'add_custom':
-        # --- AKCIA: PRIDAŤ VLASTNÚ STANICU VIA KLÁVESNICA ---
         kb = xbmcgui.DialogKeyboard('', 'Zadaj názov tvojho rádia')
         kb.doModal()
         if kb.isConfirmed():
@@ -345,13 +341,12 @@ def main():
                         new_custom = {"nazov": "[Vlastné] " + name, "url": stream_url, "logo": ""}
                         user_data["custom"].append(new_custom)
                         save_user_data(user_data)
-                        xbmcgui.Dialog().ok("Hotovo", f"Rádio '{name}' bolo úspešne uložené do Môj zoznam!")
+                        xbmcgui.Dialog().ok("Hotovo", f"Rádio '{name}' bolo úspešne uložené!")
                         xbmc.executebuiltin("Container.Refresh")
         xbmcplugin.endOfDirectory(handle, succeeded=False)
         return
 
     elif action == 'search':
-        # --- AKCIA: VYHĽADÁVANIE ---
         kb = xbmcgui.DialogKeyboard('', 'Čo chceš počúvať?')
         kb.doModal()
         if kb.isConfirmed():
@@ -362,10 +357,24 @@ def main():
         return
 
     elif action == 'play':
-        # --- PREHRÁVANIE ---
+        # --- PREHRÁVANIE SO SPRÁVNYM PRENOSOM METADÁT ---
         stream_url = params.get('url')
+        nazov_radia = params.get('nazov', 'Internetové rádio')
+        logo_radia = params.get('logo', '')
+        
         play_item = xbmcgui.ListItem(path=stream_url)
         play_item.setProperty('IsRadio', 'true')
+        
+        if logo_radia:
+            full_logo = logo_radia + '|User-Agent=Mozilla/5.0'
+            play_item.setArt({'thumb': full_logo, 'icon': full_logo})
+            
+        try:
+            info = play_item.getMusicInfoTag()
+            info.setTitle(nazov_radia)
+        except AttributeError:
+            play_item.setInfo('music', {'title': nazov_radia})
+            
         xbmcplugin.setResolvedUrl(handle, True, play_item)
 
     xbmcplugin.endOfDirectory(handle)
