@@ -54,7 +54,7 @@ def main():
     action = params.get('action')
     user_data = load_user_data()
 
-    # --- DATABÁZA RÁDIÍ (Pôvodná, nezmenená) ---
+    # --- DATABÁZA RÁDIÍ ---
     radia_sk = [
         {"nazov": "Moveit Rádio", "url": "https://play.radiosebastian.eu/listen/moveitradiosk/radio.mp3", "logo": "https://myonlineradio.sk/public/uploads/radio_img/moveit-radio/play_250_250.webp"},
         {"nazov": "Fun Rádio Leto", "url": "https://stream.funradio.sk:8000/summer128.mp3", "logo": "https://cdn.radia.sk/_radia/loga/app/fun-letne-hity.webp?v=11"},
@@ -215,15 +215,7 @@ def main():
     def create_radio_item(radio, category_name="Počúvam rádio"):
         logo_url = radio['logo'] + '|User-Agent=Mozilla/5.0' if radio.get('logo') else "DefaultAudio.png"
         li = xbmcgui.ListItem(label=radio['nazov'])
-        
-        li.setArt({
-            'thumb': logo_url,
-            'icon': logo_url,
-            'logo': logo_url,
-            'clearlogo': logo_url,
-            'poster': logo_url
-        })
-        
+        li.setArt({'thumb': logo_url, 'icon': logo_url, 'logo': logo_url, 'clearlogo': logo_url, 'poster': logo_url})
         try:
             info = li.getMusicInfoTag()
             info.setTitle(radio['nazov'])
@@ -231,7 +223,6 @@ def main():
             info.setAlbum("Živé internetové vysielanie")
         except:
             pass
-            
         li.setProperty('IsPlayable', 'true')
         li.setProperty('IsRadio', 'true')
         return li
@@ -249,10 +240,10 @@ def main():
 
     # --- ROUTING / NAVIGÁCIA ---
     if action is None:
-        add_safe_folder("🌍 Štáty", {'action': 'submenu_states'}, "DefaultFolder.png")
-        add_safe_folder("🆕 Najnovšie pridané", {'action': 'latest_added'}, "DefaultFolder.png")
-        add_safe_folder("⭐ Obľúbené (Môj zoznam)", {'action': 'my_list'}, "DefaultFolder.png")
-        add_safe_folder("🔍 Vyhľadavanie", {'action': 'search'}, "DefaultFolder.png")
+        add_safe_folder("🌍 Štáty", {'action': 'submenu_states'})
+        add_safe_folder("🆕 Najnovšie pridané", {'action': 'latest_added'})
+        add_safe_folder("⭐ Obľúbené", {'action': 'favorites_menu'})
+        add_safe_folder("🔍 Vyhľadavanie", {'action': 'search'})
 
     elif action == 'submenu_states':
         add_safe_folder("🇸🇰 Slovenské rádiá", {'action': 'list_db', 'country': 'sk'}, "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Flag_of_Slovakia.svg/250px-Flag_of_Slovakia.svg.png")
@@ -278,11 +269,13 @@ def main():
             play_url = build_url({'action': 'play', 'url': radio['url'], 'nazov': radio['nazov'], 'logo': radio.get('logo', '')})
             xbmcplugin.addDirectoryItem(handle, play_url, li, isFolder=False)
 
-    elif action == 'my_list':
-        add_safe_folder("🔥 Top 10 SK", {'action': 'list_static', 'type': 'top_sk'}, "DefaultFolder.png")
-        add_safe_folder("💥 Top 10 CZ", {'action': 'list_static', 'type': 'top_cz'}, "DefaultFolder.png")
-        add_safe_folder("➕ Pridať vlastnú stanicu", {'action': 'add_custom'}, "DefaultFolder.png")
+    elif action == 'favorites_menu':
+        add_safe_folder("🔥 Top 10 SK", {'action': 'list_static', 'type': 'top_sk'})
+        add_safe_folder("💥 Top 10 CZ", {'action': 'list_static', 'type': 'top_cz'})
+        add_safe_folder("📁 Môj zoznam", {'action': 'my_list'})
 
+    elif action == 'my_list':
+        add_safe_folder("➕ Pridať vlastnú stanicu", {'action': 'add_custom'})
         for radio in user_data.get("custom", []):
             li = create_radio_item(radio, "Vlastná stanica")
             rem_url = build_url({'action': 'remove_item', 'url': radio['url']})
@@ -324,8 +317,11 @@ def main():
         save_user_data(user_data)
         xbmcgui.Dialog().notification("Odstránené", "Stanica bola vymazaná.", xbmcgui.NOTIFICATION_INFO, 2000)
         xbmc.executebuiltin("Container.Refresh")
+        xbmcplugin.endOfDirectory(handle, succeeded=True)
+        return
 
     elif action == 'add_custom':
+        xbmcplugin.endOfDirectory(handle, succeeded=True)
         kb = xbmcgui.DialogKeyboard('', 'Zadaj názov tvojho rádia')
         kb.doModal()
         if kb.isConfirmed():
@@ -343,17 +339,16 @@ def main():
                         save_user_data(user_data)
                         xbmcgui.Dialog().ok("Hotovo", f"Rádio '{name}' bolo úspešne uložené!")
                         xbmc.executebuiltin("Container.Refresh")
-        xbmcplugin.endOfDirectory(handle, succeeded=False)
         return
 
     elif action == 'search':
+        xbmcplugin.endOfDirectory(handle, succeeded=True)
         kb = xbmcgui.DialogKeyboard('', 'Čo chceš počúvať?')
         kb.doModal()
         if kb.isConfirmed():
             search_query = kb.getText()
             if search_query:
                 xbmc.executebuiltin(f"Container.Update({build_url({'action': 'search_results', 'query': search_query})})")
-        xbmcplugin.endOfDirectory(handle, succeeded=False)
         return
 
     elif action == 'play':
@@ -366,12 +361,7 @@ def main():
         
         if logo_radia:
             full_logo = logo_radia + '|User-Agent=Mozilla/5.0'
-            play_item.setArt({
-                'thumb': full_logo, 
-                'icon': full_logo,
-                'logo': full_logo,
-                'clearlogo': full_logo
-            })
+            play_item.setArt({'thumb': full_logo, 'icon': full_logo, 'logo': full_logo, 'clearlogo': full_logo})
             
         try:
             info = play_item.getMusicInfoTag()
@@ -381,6 +371,7 @@ def main():
             pass
             
         xbmcplugin.setResolvedUrl(handle, True, play_item)
+        return
 
     xbmcplugin.endOfDirectory(handle, succeeded=True)
 
