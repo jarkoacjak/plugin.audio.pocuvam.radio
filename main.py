@@ -201,10 +201,11 @@ def main():
     user_data = load_user_data()
 
     def create_radio_item(radio, category_name="Počúvam rádio"):
+        # Spoľahlivo zamedzí prázdnym hodnotám a vynúti User-Agenta pre sieťové obrázky
         logo_url = radio['logo'] + '|User-Agent=Mozilla/5.0' if radio.get('logo') else "DefaultAudio.png"
         li = xbmcgui.ListItem(label=radio['nazov'])
         
-        # Kompletné a bezpečné naviazanie loga pre bočný náhľad aj pre riadkový zoznam (ikonky)
+        # Kompletné namapovanie zaručí prenos loga do všetkých typov skinov a riadkových zoznamov
         li.setArt({
             'thumb': logo_url,
             'icon': logo_url,
@@ -213,7 +214,7 @@ def main():
             'poster': logo_url
         })
         
-        # Vloženie tagov kategórie zabraňuje zobrazeniu "Nie sú k dispozícii žiadne informácie"
+        # Vyplnenie tagov predchádza chybe „Nie sú k dispozícii žiadne informácie“ na obrazovke
         try:
             info = li.getMusicInfoTag()
             info.setTitle(radio['nazov'])
@@ -240,7 +241,7 @@ def main():
         add_menu_item("🌍 Štáty", {'action': 'submenu_states'})
         add_menu_item("🆕 Najnovšie pridané", {'action': 'latest_added'})
         add_menu_item("⭐ Obľúbené (Môj zoznam)", {'action': 'my_list'})
-        add_menu_item("🔍 Vyhľadávanie", {'action': 'search'})
+        add_menu_item("🔍 Vyhľadavanie", {'action': 'search'})
 
     elif action == 'submenu_states':
         def add_state_item(label, flag_url, query, is_folder=True):
