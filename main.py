@@ -201,11 +201,9 @@ def main():
     user_data = load_user_data()
 
     def create_radio_item(radio, category_name="Počúvam rádio"):
-        # Spoľahlivo zamedzí prázdnym hodnotám a vynúti User-Agenta pre sieťové obrázky
         logo_url = radio['logo'] + '|User-Agent=Mozilla/5.0' if radio.get('logo') else "DefaultAudio.png"
         li = xbmcgui.ListItem(label=radio['nazov'])
         
-        # Kompletné namapovanie zaručí prenos loga do všetkých typov skinov a riadkových zoznamov
         li.setArt({
             'thumb': logo_url,
             'icon': logo_url,
@@ -214,7 +212,6 @@ def main():
             'poster': logo_url
         })
         
-        # Vyplnenie tagov predchádza chybe „Nie sú k dispozícii žiadne informácie“ na obrazovke
         try:
             info = li.getMusicInfoTag()
             info.setTitle(radio['nazov'])
@@ -231,32 +228,40 @@ def main():
         li.setProperty('IsRadio', 'true')
         return li
 
-    if action is None:
-        def add_menu_item(label, query, icon=""):
-            li = xbmcgui.ListItem(label=f"[B]{label}[/B]")
-            if icon:
-                li.setArt({'icon': icon, 'thumb': icon})
-            xbmcplugin.addDirectoryItem(handle, build_url(query), li, isFolder=True)
+    def add_safe_folder(label, query, icon="DefaultFolder.png"):
+        # Táto funkcia generuje priečinky s kompletnými informáciami, čím natvrdo zamedzí chybám Kodi
+        li = xbmcgui.ListItem(label=f"[B]{label}[/B]")
+        li.setArt({'icon': icon, 'thumb': icon, 'logo': icon, 'poster': icon})
+        try:
+            info = li.getMusicInfoTag()
+            info.setTitle(label)
+            info.setArtist(["Priečinok"])
+        except AttributeError:
+            li.setInfo('music', {'title': label, 'artist': ["Priečinok"]})
+        xbmcplugin.addDirectoryItem(handle, build_url(query), li, isFolder=True)
 
-        add_menu_item("🌍 Štáty", {'action': 'submenu_states'})
-        add_menu_item("🆕 Najnovšie pridané", {'action': 'latest_added'})
-        add_menu_item("⭐ Obľúbené (Môj zoznam)", {'action': 'my_list'})
-        add_menu_item("🔍 Vyhľadavanie", {'action': 'search'})
+    if action is None:
+        add_safe_folder("🌍 Štáty", {'action': 'submenu_states'})
+        add_safe_folder("🆕 Najnovšie pridané", {'action': 'latest_added'})
+        add_safe_folder("⭐ Obľúbené (Môj zoznam)", {'action': 'my_list'})
+        add_safe_folder("🔍 Vyhľadavanie", {'action': 'search'})
 
     elif action == 'submenu_states':
-        def add_state_item(label, flag_url, query, is_folder=True):
-            li = xbmcgui.ListItem(label=f"[B]{label}[/B]")
-            li.setArt({'icon': flag_url, 'thumb': flag_url, 'logo': flag_url})
-            xbmcplugin.addDirectoryItem(handle, build_url(query), li, isFolder=is_folder)
-
-        add_state_item("🇸🇰 Slovenské rádiá", "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Flag_of_Slovakia.svg/250px-Flag_of_Slovakia.svg.png", {'action': 'list_db', 'country': 'sk'})
-        add_state_item("🇨🇿 České rádiá", "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Flag_of_the_Czech_Republic.svg/250px-Flag_of_the_Czech_Republic.svg.png", {'action': 'list_db', 'country': 'cz'})
-        add_state_item("🇭🇺 Maďarské rádiá", "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Flag_of_Hungary.svg/250px-Flag_of_Hungary.svg.png", {'action': 'hungary_info'}, is_folder=False)
+        add_safe_folder("🇸🇰 Slovenské rádiá", {'action': 'list_db', 'country': 'sk'}, "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Flag_of_Slovakia.svg/250px-Flag_of_Slovakia.svg.png")
+        add_safe_folder("🇨🇿 České rádiá", {'action': 'list_db', 'country': 'cz'}, "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Flag_of_the_Czech_Republic.svg/250px-Flag_of_the_Czech_Republic.svg.png")
+        
+        # Priečinok pre Maďarsko upravený tak, aby nevyvolal prázdnu odozvu
+        li_hu = xbmcgui.ListItem(label="[B]🇭🇺 Maďarské rádiá[/B]")
+        li_hu.setArt({'icon': "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Flag_of_Hungary.svg/250px-Flag_of_Hungary.svg.png"})
+        try:
+            li_hu.getMusicInfoTag().setTitle("Maďarské rádiá")
+        except:
+            li_hu.setInfo('music', {'title': "Maďarské rádiá"})
+        xbmcplugin.addDirectoryItem(handle, build_url({'action': 'hungary_info'}), li_hu, isFolder=False)
 
     elif action == 'hungary_info':
         xbmcgui.Dialog().ok("Informácia", "Pripravujeme...")
-        xbmcplugin.endOfDirectory(handle, succeeded=False)
-        return
+        xbmc.executebuiltin("Container.Refresh")
 
     elif action == 'latest_added':
         najnovsie = radia_sk[-5:] + radia_cz[-5:]
@@ -268,14 +273,9 @@ def main():
             xbmcplugin.addDirectoryItem(handle, play_url, li, isFolder=False)
 
     elif action == 'my_list':
-        li_sk = xbmcgui.ListItem(label="[B]🔥 Top 10 SK[/B]")
-        xbmcplugin.addDirectoryItem(handle, build_url({'action': 'list_static', 'type': 'top_sk'}), li_sk, isFolder=True)
-        
-        li_cz = xbmcgui.ListItem(label="[B]💥 Top 10 CZ[/B]")
-        xbmcplugin.addDirectoryItem(handle, build_url({'action': 'list_static', 'type': 'top_cz'}), li_cz, isFolder=True)
-        
-        li_add = xbmcgui.ListItem(label="[B]➕ Pridať vlastnú stanicu[/B]")
-        xbmcplugin.addDirectoryItem(handle, build_url({'action': 'add_custom'}), li_add, isFolder=True)
+        add_safe_folder("🔥 Top 10 SK", {'action': 'list_static', 'type': 'top_sk'})
+        add_safe_folder("💥 Top 10 CZ", {'action': 'list_static', 'type': 'top_cz'})
+        add_safe_folder("➕ Pridať vlastnú stanicu", {'action': 'add_custom'})
 
         for radio in user_data["custom"]:
             li = create_radio_item(radio, "Vlastná stanica")
