@@ -50,7 +50,6 @@ def main():
     except:
         return
 
-    xbmcplugin.setContent(handle, 'songs')
     action = params.get('action')
     user_data = load_user_data()
 
@@ -164,8 +163,10 @@ def main():
     ]
 
     radia_cz = [
+        {"nazov": "ČRo Hradec Králové", "url": "https://rozhlas.stream/hradec_kralove_high.aac", "logo": "https://radia-online.com/files/styles/180/public/logo/cesky-rozhlas-hradec-kralove.jpg"},
+        {"nazov": "ČRo Jazz", "url": "https://rozhlas.stream/jazz_low.aac", "logo": "https://cdn.sanity.io/images/orhkaa59/production/6919323d4e82d622ee98c9284aa724f54b794a39-300x300.png"},
         {"nazov": "ČRo D-dur", "url": "https://rozhlas.stream/ddur_high.aac", "logo": "https://cdn.sanity.io/images/orhkaa59/production/9a9327849aa30ac0b43a91a77da8ad9c0289519d-300x300.png"},
-        {"nazov": "ČRo Dvojka", "url": "https://rozhlas.stream/dvojka_high.aac", "logo": "https://images.zeno.fm/E2uXXxWig2gim7BHy_87Zrhcw_oXbsmJ81NroX2Rfo0/rs:fill:288:288/g:ce:0:0/aHR0cHM6Ly9wcm94eS56ZW5vLmZtL2NvbnRlbnQvc3RhdGlvbnMvODRjMDdlZWQtMzJlMC00YmViLWE2M2EtMWI2NjIxNzBjNmU2L2ltYWdlLz91PTE3MTM4NzMyMzcwMDA.webp"},
+        {"nazov": "ČRo Dvojka", "url": "https://rozhlas.stream/dvojka_high.aac", "logo": "https://images.zeno.fm/E2uXXxWig2gim7BHy_87Zrhcw_oXbsmJ81NroX2Rfo0/rs:fill:288:288/g:ce:0:0/aHR0cHM6Ly9wcm94eS56ZW5vLmZtL2NvbnRlbnQvc3RhdGlvbnMvYTg0YzA3ZWVkLTMyZTAtNGJlYi1hNjNhLTFiNjYyMTcwYzZlNi9pbWFnZS8_dT0xNzEzODczMjM3MDAw.webp"},
         {"nazov": "ČRO Brno", "url": "https://rozhlas.stream/brno_high.aac", "logo": "https://radia-online.com/files/styles/180/public/logo/cesky-rozhlas-brno.jpg"},
         {"nazov": "ČRO České Budějovice", "url": "https://rozhlas.stream/ceske_budejovice_high.aac", "logo": "http://api.play.cz/static/radio_logo/t200/crocb.png"},
         {"nazov": "Český Blaník", "url": "https://playerservices.streamtheworld.com/api/livestream-redirect/RADIO_BLANIKCZ_128.mp3", "logo": "https://radia.cz/media/default/0001/01/663721c3e5e911880a625e89abc926c8c882bce3.svg"},
@@ -244,12 +245,15 @@ def main():
 
     # --- ROUTING / NAVIGÁCIA ---
     if action is None:
+        xbmcplugin.setContent(handle, 'songs')
         add_safe_folder("🌍 Štáty", {'action': 'submenu_states'})
         add_safe_folder("🆕 Najnovšie pridané", {'action': 'latest_added'})
         add_safe_folder("⭐ Obľúbené", {'action': 'favorites_menu'})
         add_safe_folder("🔍 Vyhľadavanie", {'action': 'search_trigger'})
+        xbmcplugin.endOfDirectory(handle, succeeded=True)
 
     elif action == 'submenu_states':
+        xbmcplugin.setContent(handle, 'songs')
         add_safe_folder("🇸🇰 Slovenské rádiá", {'action': 'list_db', 'country': 'sk'}, "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Flag_of_Slovakia.svg/250px-Flag_of_Slovakia.svg.png")
         add_safe_folder("🇨🇿 České rádiá", {'action': 'list_db', 'country': 'cz'}, "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Flag_of_the_Czech_Republic.svg/250px-Flag_of_the_Czech_Republic.svg.png")
         
@@ -260,25 +264,30 @@ def main():
         except:
             pass
         xbmcplugin.addDirectoryItem(handle, build_url({'action': 'hungary_info'}), li_hu, isFolder=False)
+        xbmcplugin.endOfDirectory(handle, succeeded=True)
 
     elif action == 'hungary_info':
         xbmcgui.Dialog().ok("Informácia", "Pripravujeme...")
-        xbmc.executebuiltin("Container.Refresh")
 
     elif action == 'latest_added':
+        xbmcplugin.setContent(handle, 'songs')
         najnovsie = radia_sk[-5:] + radia_cz[-5:]
         najnovsie.reverse()
         for radio in najnovsie:
             li = create_radio_item(radio, "Najnovšie pridané")
             play_url = build_url({'action': 'play', 'url': radio['url'], 'nazov': radio['nazov'], 'logo': radio.get('logo', '')})
             xbmcplugin.addDirectoryItem(handle, play_url, li, isFolder=False)
+        xbmcplugin.endOfDirectory(handle, succeeded=True)
 
     elif action == 'favorites_menu':
+        xbmcplugin.setContent(handle, 'songs')
         add_safe_folder("🔥 Top 10 SK", {'action': 'list_static', 'type': 'top_sk'})
         add_safe_folder("💥 Top 10 CZ", {'action': 'list_static', 'type': 'top_cz'})
         add_safe_folder("📁 Môj zoznam", {'action': 'my_list'})
+        xbmcplugin.endOfDirectory(handle, succeeded=True)
 
     elif action == 'my_list':
+        xbmcplugin.setContent(handle, 'songs')
         add_safe_folder("➕ Pridať vlastnú stanicu", {'action': 'add_custom'})
         for radio in user_data.get("custom", []):
             li = create_radio_item(radio, "Vlastná stanica")
@@ -286,8 +295,10 @@ def main():
             li.addContextMenuItems([('Odstrániť vlastnú stanicu', f'RunPlugin({rem_url})')])
             play_url = build_url({'action': 'play', 'url': radio['url'], 'nazov': radio['nazov'], 'logo': radio.get('logo', '')})
             xbmcplugin.addDirectoryItem(handle, play_url, li, isFolder=False)
+        xbmcplugin.endOfDirectory(handle, succeeded=True)
 
     elif action in ['list_db', 'list_static', 'search_results']:
+        xbmcplugin.setContent(handle, 'songs')
         vybrane_radia = []
         kat = "Internetové rádio"
         
@@ -314,6 +325,7 @@ def main():
             li = create_radio_item(radio, kat)
             play_url = build_url({'action': 'play', 'url': radio['url'], 'nazov': radio['nazov'], 'logo': radio.get('logo', '')})
             xbmcplugin.addDirectoryItem(handle, play_url, li, isFolder=False)
+        xbmcplugin.endOfDirectory(handle, succeeded=True)
 
     elif action == 'remove_item':
         url_to_rem = params.get('url')
@@ -321,10 +333,10 @@ def main():
         save_user_data(user_data)
         xbmcgui.Dialog().notification("Odstránené", "Stanica bola vymazaná.", xbmcgui.NOTIFICATION_INFO, 2000)
         xbmc.executebuiltin("Container.Refresh")
-        return
 
-    # --- OPRAVENÉ PRIDÁVANIE VLASTNÝCH STANÍC ---
+    # --- SÚČASŤ OPRAVY: PRIDÁVANIE VLASTNÝCH STANÍC ---
     elif action == 'add_custom':
+        # Ihneď uvoľníme Kodi adresár, aby sa nezaseklo načítavanie
         xbmcplugin.endOfDirectory(handle, succeeded=True)
         
         kb = xbmcgui.DialogKeyboard('', 'Zadaj názov rádia')
@@ -340,21 +352,22 @@ def main():
                     user_data["custom"] = []
                 user_data["custom"].append(new_custom)
                 save_user_data(user_data)
-                xbmcgui.Dialog().ok("Úspech", f"Rádio '{name}' bolo pridané!")
-                        
+                xbmcgui.Dialog().notification("Úspech", f"Rádio '{name}' pridané!", xbmcgui.NOTIFICATION_INFO, 2500)
+        
+        # Osviežime zobrazenie priečinka, aby sa nové rádio hneď objavilo
         xbmc.executebuiltin("Container.Refresh")
-        return
 
-    # --- OPRAVENÉ VYHĽADÁVANIE ---
+    # --- SÚČASŤ OPRAVY: VYHĽADÁVANIE ---
     elif action == 'search_trigger':
+        # Ihneď uvoľníme Kodi adresár
         xbmcplugin.endOfDirectory(handle, succeeded=True)
         
         kb = xbmcgui.DialogKeyboard('', 'Čo chceš vyhľadať?')
         kb.doModal()
         if kb.isConfirmed() and kb.getText():
             search_query = kb.getText()
+            # Správna aktualizácia kontajnera namiesto prekrývania pluginov
             xbmc.executebuiltin(f"Container.Update({build_url({'action': 'search_results', 'query': search_query})})")
-        return
 
     elif action == 'play':
         stream_url = params.get('url')
@@ -376,9 +389,6 @@ def main():
             pass
             
         xbmcplugin.setResolvedUrl(handle, True, play_item)
-        return
-
-    xbmcplugin.endOfDirectory(handle, succeeded=True)
 
 if __name__ == '__main__':
     main()
