@@ -164,6 +164,8 @@ def main():
     ]
 
     radia_cz = [
+        {"nazov": "ČRo D-dur", "url": "https://rozhlas.stream/ddur_high.aac", "logo": "https://cdn.sanity.io/images/orhkaa59/production/9a9327849aa30ac0b43a91a77da8ad9c0289519d-300x300.png"},
+        {"nazov": "ČRo Dvojka", "url": "https://rozhlas.stream/dvojka_high.aac", "logo": "https://images.zeno.fm/E2uXXxWig2gim7BHy_87Zrhcw_oXbsmJ81NroX2Rfo0/rs:fill:288:288/g:ce:0:0/aHR0cHM6Ly9wcm94eS56ZW5vLmZtL2NvbnRlbnQvc3RhdGlvbnMvODRjMDdlZWQtMzJlMC00YmViLWE2M2EtMWI2NjIxNzBjNmU2L2ltYWdlLz91PTE3MTM4NzMyMzcwMDA.webp"},
         {"nazov": "ČRO Brno", "url": "https://rozhlas.stream/brno_high.aac", "logo": "https://radia-online.com/files/styles/180/public/logo/cesky-rozhlas-brno.jpg"},
         {"nazov": "ČRO České Budějovice", "url": "https://rozhlas.stream/ceske_budejovice_high.aac", "logo": "http://api.play.cz/static/radio_logo/t200/crocb.png"},
         {"nazov": "Český Blaník", "url": "https://playerservices.streamtheworld.com/api/livestream-redirect/RADIO_BLANIKCZ_128.mp3", "logo": "https://radia.cz/media/default/0001/01/663721c3e5e911880a625e89abc926c8c882bce3.svg"},
@@ -321,40 +323,37 @@ def main():
         xbmc.executebuiltin("Container.Refresh")
         return
 
-    # --- BEZPEČNÝ SPÚŠŤAČ PRE PRIDÁVANIE ---
+    # --- OPRAVENÉ PRIDÁVANIE VLASTNÝCH STANÍC ---
     elif action == 'add_custom':
         xbmcplugin.endOfDirectory(handle, succeeded=True)
         
         kb = xbmcgui.DialogKeyboard('', 'Zadaj názov rádia')
         kb.doModal()
-        if kb.isConfirmed():
+        if kb.isConfirmed() and kb.getText():
             name = kb.getText()
-            if name:
-                kb_url = xbmcgui.DialogKeyboard('', 'Vlož presnú URL adresu streamu')
-                kb_url.doModal()
-                if kb_url.isConfirmed():
-                    stream_url = kb_url.getText()
-                    if stream_url:
-                        new_custom = {"nazov": "[Vlastné] " + name, "url": stream_url, "logo": ""}
-                        if "custom" not in user_data:
-                            user_data["custom"] = []
-                        user_data["custom"].append(new_custom)
-                        save_user_data(user_data)
-                        xbmcgui.Dialog().ok("Úspech", f"Rádio '{name}' bolo pridané!")
+            kb_url = xbmcgui.DialogKeyboard('', 'Vlož presnú URL adresu streamu')
+            kb_url.doModal()
+            if kb_url.isConfirmed() and kb_url.getText():
+                stream_url = kb_url.getText()
+                new_custom = {"nazov": "[Vlastné] " + name, "url": stream_url, "logo": ""}
+                if "custom" not in user_data:
+                    user_data["custom"] = []
+                user_data["custom"].append(new_custom)
+                save_user_data(user_data)
+                xbmcgui.Dialog().ok("Úspech", f"Rádio '{name}' bolo pridané!")
                         
         xbmc.executebuiltin("Container.Refresh")
         return
 
-    # --- BEZPEČNÝ SPÚŠŤAČ PRE VYHĽADÁVANIE ---
+    # --- OPRAVENÉ VYHĽADÁVANIE ---
     elif action == 'search_trigger':
         xbmcplugin.endOfDirectory(handle, succeeded=True)
         
         kb = xbmcgui.DialogKeyboard('', 'Čo chceš vyhľadať?')
         kb.doModal()
-        if kb.isConfirmed():
+        if kb.isConfirmed() and kb.getText():
             search_query = kb.getText()
-            if search_query:
-                xbmc.executebuiltin(f"Container.Update({build_url({'action': 'search_results', 'query': search_query})})")
+            xbmc.executebuiltin(f"Container.Update({build_url({'action': 'search_results', 'query': search_query})})")
         return
 
     elif action == 'play':
