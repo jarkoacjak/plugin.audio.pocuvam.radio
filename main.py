@@ -11,7 +11,6 @@ import xbmcvfs
 def build_url(query):
     return sys.argv[0] + '?' + urllib.parse.urlencode(query)
 
-# Správa databázy vlastných staníc
 def get_db_path():
     profile_path = xbmcvfs.translatePath(xbmcaddon.Addon().getAddonInfo('profile'))
     if not xbmcvfs.exists(profile_path):
@@ -201,32 +200,30 @@ def main():
     action = params.get('action')
     user_data = load_user_data()
 
-    # Pomocná funkcia na vytvorenie ListItemu s plnou podporou loga a informácií
-    def create_radio_item(radio, category_name="Internetové rádio"):
+    def create_radio_item(radio, category_name="Počúvam rádio"):
         logo_url = radio['logo'] + '|User-Agent=Mozilla/5.0' if radio.get('logo') else "DefaultAudio.png"
         li = xbmcgui.ListItem(label=radio['nazov'])
         
-        # Nastavenie všetkých grafických vrstiev vrátane ikony pre riadkový zoznam
+        # Kompletné nastavenie všetkých parametrov obrázkov pre skin
         li.setArt({
-            'thumb': logo_url, 
-            'icon': logo_url, 
-            'logo': logo_url, 
-            'clearlogo': logo_url, 
-            'poster': logo_url,
-            'banner': logo_url
+            'thumb': logo_url,
+            'icon': logo_url,
+            'logo': logo_url,
+            'clearlogo': logo_url,
+            'poster': logo_url
         })
         
-        # Vyplnenie tagov, aby nezobrazovalo hlášku "Nie sú dostupné žiadne informácie"
+        # Vyplnenie metadát kategórie (upraví prázdne popisy)
         try:
             info = li.getMusicInfoTag()
             info.setTitle(radio['nazov'])
             info.setArtist([category_name])
-            info.setAlbum("Počúvam rádio")
+            info.setAlbum("Slovenská republika" if "sk" in category_name.lower() else "Česká republika")
         except AttributeError:
             li.setInfo('music', {
                 'title': radio['nazov'],
                 'artist': [category_name],
-                'album': "Počúvam rádio"
+                'album': "Živé vysielanie"
             })
             
         li.setProperty('IsPlayable', 'true')
@@ -234,7 +231,6 @@ def main():
         return li
 
     if action is None:
-        # --- HLAVNÉ MENU ---
         def add_menu_item(label, query, icon=""):
             li = xbmcgui.ListItem(label=f"[B]{label}[/B]")
             if icon:
@@ -247,7 +243,6 @@ def main():
         add_menu_item("🔍 Vyhľadávanie", {'action': 'search'})
 
     elif action == 'submenu_states':
-        # --- SUBMENU: ŠTÁTY ---
         def add_state_item(label, flag_url, query, is_folder=True):
             li = xbmcgui.ListItem(label=f"[B]{label}[/B]")
             li.setArt({'icon': flag_url, 'thumb': flag_url})
@@ -263,7 +258,6 @@ def main():
         return
 
     elif action == 'latest_added':
-        # --- ZOZNAM: NAJNOVŠIE PRIDANÉ ---
         najnovsie = radia_sk[-5:] + radia_cz[-5:]
         najnovsie.reverse()
 
@@ -273,7 +267,6 @@ def main():
             xbmcplugin.addDirectoryItem(handle, play_url, li, isFolder=False)
 
     elif action == 'my_list':
-        # --- MENU OBĽÚBENÉ (MÔJ ZOZNAM) ---
         li_sk = xbmcgui.ListItem(label="[B]🔥 Top 10 SK[/B]")
         xbmcplugin.addDirectoryItem(handle, build_url({'action': 'list_static', 'type': 'top_sk'}), li_sk, isFolder=True)
         
@@ -292,7 +285,6 @@ def main():
             xbmcplugin.addDirectoryItem(handle, play_url, li, isFolder=False)
 
     elif action in ['list_db', 'list_static', 'search_results']:
-        # --- ZOBRAZENIE ZOZNAMOV RÁDIÍ ---
         vybrane_radia = []
         kat = "Internetové rádio"
         
@@ -357,7 +349,6 @@ def main():
         return
 
     elif action == 'play':
-        # --- PREHRÁVANIE SO SPRÁVNYM PRENOSOM METADÁT ---
         stream_url = params.get('url')
         nazov_radia = params.get('nazov', 'Internetové rádio')
         logo_radia = params.get('logo', '')
@@ -367,13 +358,19 @@ def main():
         
         if logo_radia:
             full_logo = logo_radia + '|User-Agent=Mozilla/5.0'
-            play_item.setArt({'thumb': full_logo, 'icon': full_logo})
+            play_item.setArt({
+                'thumb': full_logo, 
+                'icon': full_logo,
+                'logo': full_logo,
+                'clearlogo': full_logo
+            })
             
         try:
             info = play_item.getMusicInfoTag()
             info.setTitle(nazov_radia)
+            info.setArtist(["Rádiový stream"])
         except AttributeError:
-            play_item.setInfo('music', {'title': nazov_radia})
+            play_item.setInfo('music', {'title': nazov_radia, 'artist': ["Rádiový stream"]})
             
         xbmcplugin.setResolvedUrl(handle, True, play_item)
 
