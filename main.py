@@ -12,14 +12,20 @@ def build_url(query):
     return sys.argv[0] + '?' + urllib.parse.urlencode(query)
 
 def get_db_path():
-    profile_path = xbmcvfs.translatePath(xbmcaddon.Addon().getAddonInfo('profile'))
-    if not xbmcvfs.exists(profile_path):
-        xbmcvfs.mkdir(profile_path)
-    return os.path.join(profile_path, 'data.json')
+    try:
+        addon_profile = xbmcaddon.Addon().getAddonInfo('profile')
+        profile_path = xbmcvfs.translatePath(addon_profile)
+        if not profile_path:
+            profile_path = xbmcvfs.translatePath(os.path.join('special://profile/addon_data', xbmcaddon.Addon().getAddonInfo('id')))
+        if not xbmcvfs.exists(profile_path):
+            xbmcvfs.mkdir(profile_path)
+        return os.path.join(profile_path, 'data.json')
+    except:
+        return ""
 
 def load_user_data():
     db_path = get_db_path()
-    if os.path.exists(db_path):
+    if db_path and os.path.exists(db_path):
         try:
             with open(db_path, 'r', encoding='utf-8') as f:
                 return json.load(f)
@@ -29,17 +35,26 @@ def load_user_data():
 
 def save_user_data(data):
     db_path = get_db_path()
-    with open(db_path, 'w', encoding='utf-8') as f:
-        json.dump(data, f, ensure_ascii=False, indent=4)
+    if db_path:
+        try:
+            with open(db_path, 'w', encoding='utf-8') as f:
+                json.dump(data, f, ensure_ascii=False, indent=4)
+        except:
+            pass
 
 def main():
-    handle = int(sys.argv[1])
-    arg_string = sys.argv[2][1:]
-    params = dict(urllib.parse.parse_qsl(arg_string))
+    try:
+        handle = int(sys.argv[1])
+        arg_string = sys.argv[2][1:]
+        params = dict(urllib.parse.parse_qsl(arg_string))
+    except:
+        return
 
     xbmcplugin.setContent(handle, 'songs')
+    action = params.get('action')
+    user_data = load_user_data()
 
-    # --- DATABÁZA RÁDIÍ ---
+    # --- DATABÁZA RÁDIÍ (Pôvodná, nezmenená) ---
     radia_sk = [
         {"nazov": "Moveit Rádio", "url": "https://play.radiosebastian.eu/listen/moveitradiosk/radio.mp3", "logo": "https://myonlineradio.sk/public/uploads/radio_img/moveit-radio/play_250_250.webp"},
         {"nazov": "Fun Rádio Leto", "url": "https://stream.funradio.sk:8000/summer128.mp3", "logo": "https://cdn.radia.sk/_radia/loga/app/fun-letne-hity.webp?v=11"},
@@ -197,9 +212,6 @@ def main():
         {"nazov": "Blue Radio", "url": "https://stream.blueradio.cz/live", "logo": "https://stream.blueradio.cz/img/logo.png"}
     ]
 
-    action = params.get('action')
-    user_data = load_user_data()
-
     def create_radio_item(radio, category_name="Počúvam rádio"):
         logo_url = radio['logo'] + '|User-Agent=Mozilla/5.0' if radio.get('logo') else "DefaultAudio.png"
         li = xbmcgui.ListItem(label=radio['nazov'])
@@ -217,12 +229,8 @@ def main():
             info.setTitle(radio['nazov'])
             info.setArtist([category_name])
             info.setAlbum("Živé internetové vysielanie")
-        except AttributeError:
-            li.setInfo('music', {
-                'title': radio['nazov'],
-                'artist': [category_name],
-                'album': "Živé internetové vysielanie"
-            })
+        except:
+            pass
             
         li.setProperty('IsPlayable', 'true')
         li.setProperty('IsRadio', 'true')
@@ -235,26 +243,27 @@ def main():
             info = li.getMusicInfoTag()
             info.setTitle(label)
             info.setArtist(["Priečinok"])
-        except AttributeError:
-            li.setInfo('music', {'title': label, 'artist': ["Priečinok"]})
+        except:
+            pass
         xbmcplugin.addDirectoryItem(handle, build_url(query), li, isFolder=True)
 
+    # --- ROUTING / NAVIGÁCIA ---
     if action is None:
-        add_safe_folder("🌍 Štáty", {'action': 'submenu_states'})
-        add_safe_folder("🆕 Najnovšie pridané", {'action': 'latest_added'})
-        add_safe_folder("⭐ Obľúbené (Môj zoznam)", {'action': 'my_list'})
-        add_safe_folder("🔍 Vyhľadavanie", {'action': 'search'})
+        add_safe_folder("🌍 Štáty", {'action': 'submenu_states'}, "DefaultFolder.png")
+        add_safe_folder("🆕 Najnovšie pridané", {'action': 'latest_added'}, "DefaultFolder.png")
+        add_safe_folder("⭐ Obľúbené (Môj zoznam)", {'action': 'my_list'}, "DefaultFolder.png")
+        add_safe_folder("🔍 Vyhľadavanie", {'action': 'search'}, "DefaultFolder.png")
 
     elif action == 'submenu_states':
         add_safe_folder("🇸🇰 Slovenské rádiá", {'action': 'list_db', 'country': 'sk'}, "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Flag_of_Slovakia.svg/250px-Flag_of_Slovakia.svg.png")
         add_safe_folder("🇨🇿 České rádiá", {'action': 'list_db', 'country': 'cz'}, "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Flag_of_the_Czech_Republic.svg/250px-Flag_of_the_Czech_Republic.svg.png")
         
         li_hu = xbmcgui.ListItem(label="[B]🇭🇺 Maďarské rádiá[/B]")
-        li_hu.setArt({'icon': "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Flag_of_Hungary.svg/250px-Flag_of_Hungary.svg.png"})
+        li_hu.setArt({'icon': "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Flag_of_Hungary.svg/250px-Flag_of_Hungary.svg.png", 'thumb': "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Flag_of_Hungary.svg/250px-Flag_of_Hungary.svg.png"})
         try:
             li_hu.getMusicInfoTag().setTitle("Maďarské rádiá")
         except:
-            li_hu.setInfo('music', {'title': "Maďarské rádiá"})
+            pass
         xbmcplugin.addDirectoryItem(handle, build_url({'action': 'hungary_info'}), li_hu, isFolder=False)
 
     elif action == 'hungary_info':
@@ -264,22 +273,20 @@ def main():
     elif action == 'latest_added':
         najnovsie = radia_sk[-5:] + radia_cz[-5:]
         najnovsie.reverse()
-
         for radio in najnovsie:
             li = create_radio_item(radio, "Najnovšie pridané")
             play_url = build_url({'action': 'play', 'url': radio['url'], 'nazov': radio['nazov'], 'logo': radio.get('logo', '')})
             xbmcplugin.addDirectoryItem(handle, play_url, li, isFolder=False)
 
     elif action == 'my_list':
-        add_safe_folder("🔥 Top 10 SK", {'action': 'list_static', 'type': 'top_sk'})
-        add_safe_folder("💥 Top 10 CZ", {'action': 'list_static', 'type': 'top_cz'})
-        add_safe_folder("➕ Pridať vlastnú stanicu", {'action': 'add_custom'})
+        add_safe_folder("🔥 Top 10 SK", {'action': 'list_static', 'type': 'top_sk'}, "DefaultFolder.png")
+        add_safe_folder("💥 Top 10 CZ", {'action': 'list_static', 'type': 'top_cz'}, "DefaultFolder.png")
+        add_safe_folder("➕ Pridať vlastnú stanicu", {'action': 'add_custom'}, "DefaultFolder.png")
 
-        for radio in user_data["custom"]:
+        for radio in user_data.get("custom", []):
             li = create_radio_item(radio, "Vlastná stanica")
             rem_url = build_url({'action': 'remove_item', 'url': radio['url']})
             li.addContextMenuItems([('Odstrániť vlastnú stanicu', f'RunPlugin({rem_url})')])
-
             play_url = build_url({'action': 'play', 'url': radio['url'], 'nazov': radio['nazov'], 'logo': radio.get('logo', '')})
             xbmcplugin.addDirectoryItem(handle, play_url, li, isFolder=False)
 
@@ -313,7 +320,7 @@ def main():
 
     elif action == 'remove_item':
         url_to_rem = params.get('url')
-        user_data["custom"] = [c for c in user_data["custom"] if c['url'] != url_to_rem]
+        user_data["custom"] = [c for c in user_data.get("custom", []) if c['url'] != url_to_rem]
         save_user_data(user_data)
         xbmcgui.Dialog().notification("Odstránené", "Stanica bola vymazaná.", xbmcgui.NOTIFICATION_INFO, 2000)
         xbmc.executebuiltin("Container.Refresh")
@@ -330,6 +337,8 @@ def main():
                     stream_url = kb_url.getText()
                     if stream_url:
                         new_custom = {"nazov": "[Vlastné] " + name, "url": stream_url, "logo": ""}
+                        if "custom" not in user_data:
+                            user_data["custom"] = []
                         user_data["custom"].append(new_custom)
                         save_user_data(user_data)
                         xbmcgui.Dialog().ok("Hotovo", f"Rádio '{name}' bolo úspešne uložené!")
@@ -368,12 +377,12 @@ def main():
             info = play_item.getMusicInfoTag()
             info.setTitle(nazov_radia)
             info.setArtist(["Rádiový stream"])
-        except AttributeError:
-            play_item.setInfo('music', {'title': nazov_radia, 'artist': ["Rádiový stream"]})
+        except:
+            pass
             
         xbmcplugin.setResolvedUrl(handle, True, play_item)
 
-    xbmcplugin.endOfDirectory(handle)
+    xbmcplugin.endOfDirectory(handle, succeeded=True)
 
 if __name__ == '__main__':
     main()
