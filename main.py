@@ -164,6 +164,8 @@ def main():
     ]
 
     radia_cz = [
+        {"nazov": "ČRO Brno", "url": "https://rozhlas.stream/brno_high.aac", "logo": "https://radia-online.com/files/styles/180/public/logo/cesky-rozhlas-brno.jpg"},
+        {"nazov": "ČRO České Budějovice", "url": "https://rozhlas.stream/ceske_budejovice_high.aac", "logo": "http://api.play.cz/static/radio_logo/t200/crocb.png"},
         {"nazov": "Český Blaník", "url": "https://playerservices.streamtheworld.com/api/livestream-redirect/RADIO_BLANIKCZ_128.mp3", "logo": "https://radia.cz/media/default/0001/01/663721c3e5e911880a625e89abc926c8c882bce3.svg"},
         {"nazov": "Rádio Impuls", "url": "http://icecast5.play.cz/impuls128.mp3", "logo": "https://myonlineradio.cz/public/uploads/radio_img/radio-impuls/play_250_250.webp"},
         {"nazov": "Crazy Rádio", "url": "http://live.topradio.cz:8000/crazy128", "logo": "http://hit-radio.cz/media/logo_6a043bd4bd019.jpg"},
@@ -321,7 +323,6 @@ def main():
 
     # --- BEZPEČNÝ SPÚŠŤAČ PRE PRIDÁVANIE ---
     elif action == 'add_custom':
-        # Dokončíme generovanie okna aby Kodi nezamrzlo
         xbmcplugin.endOfDirectory(handle, succeeded=True)
         
         kb = xbmcgui.DialogKeyboard('', 'Zadaj názov rádia')
@@ -341,13 +342,11 @@ def main():
                         save_user_data(user_data)
                         xbmcgui.Dialog().ok("Úspech", f"Rádio '{name}' bolo pridané!")
                         
-        # Osviežime zobrazenie priečinka Môj zoznam
         xbmc.executebuiltin("Container.Refresh")
         return
 
     # --- BEZPEČNÝ SPÚŠŤAČ PRE VYHĽADÁVANIE ---
     elif action == 'search_trigger':
-        # Dokončíme generovanie adresára
         xbmcplugin.endOfDirectory(handle, succeeded=True)
         
         kb = xbmcgui.DialogKeyboard('', 'Čo chceš vyhľadať?')
@@ -355,7 +354,6 @@ def main():
         if kb.isConfirmed():
             search_query = kb.getText()
             if search_query:
-                # Načítame výsledky priamo do aktívneho zobrazenia bez zlyhania
                 xbmc.executebuiltin(f"Container.Update({build_url({'action': 'search_results', 'query': search_query})})")
         return
 
