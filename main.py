@@ -163,6 +163,8 @@ def main():
     ]
 
     radia_cz = [
+        {"nazov": "ČRo Pardubice", "url": "https://rozhlas.stream/pardubice_high.aac", "logo": "https://radia-online.com/files/styles/180/public/logo/cesky-rozhlas-pardubice.jpg"},
+        {"nazov": "ČRo Plus", "url": "https://rozhlas.stream/plus_high.aac", "logo": "https://radia-online.com/files/styles/media/public/logo/cesky-rozhlas-plus.jpg"},
         {"nazov": "ČRo Olomouc", "url": "https://rozhlas.stream/olomouc_high.aac", "logo": "https://radia-online.com/files/styles/180/public/logo/cesky-rozhlas-olomouc.jpg"},
         {"nazov": "ČRo Ostrava", "url": "https://rozhlas.stream/ostrava_high.aac", "logo": "https://radia-online.com/files/styles/180/public/logo/cesky-rozhlas-ostrava.jpg"},
         {"nazov": "ČRo Karlovy Vary", "url": "https://rozhlas.stream/karlovy_vary_high.aac", "logo": "https://www.boheminium.cz/wp-content/uploads/2015/08/CRo-KV.jpg"},
@@ -275,8 +277,8 @@ def main():
 
     elif action == 'latest_added':
         xbmcplugin.setContent(handle, 'songs')
-        najnovsie = radia_sk[-5:] + radia_cz[-5:]
-        najnovsie.reverse()
+        # OPRAVA: Berieme začiatok zoznamov, keďže nové stanice pridávame hore.
+        najnovsie = radia_cz[:3] + radia_sk[:2]
         for radio in najnovsie:
             li = create_radio_item(radio, "Najnovšie pridané")
             play_url = build_url({'action': 'play', 'url': radio['url'], 'nazov': radio['nazov'], 'logo': radio.get('logo', '')})
