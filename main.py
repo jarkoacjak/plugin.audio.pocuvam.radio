@@ -2,6 +2,7 @@ import sys
 import urllib.parse
 import json
 import os
+import unicodedata
 import xbmc
 import xbmcaddon
 import xbmcgui
@@ -10,6 +11,11 @@ import xbmcvfs
 
 def build_url(query):
     return sys.argv[0] + '?' + urllib.parse.urlencode(query)
+
+def remove_diacritics(text):
+    """Odstráni diakritiku z textu pre lepšie vyhľadávanie (napr. ČRo -> CRo)"""
+    normalized = unicodedata.normalize('NFKD', text)
+    return "".join([c for c in normalized if not unicodedata.combining(c)])
 
 def get_db_path():
     try:
@@ -104,7 +110,7 @@ def main():
         {"nazov": "Rádio PaF", "url": "https://node-23.zeno.fm/92cv04cggfhvv", "logo": "https://cdn.radia.sk/_radia/loga/coverflow/paf.png"},
         {"nazov": "Rádio Logos", "url": "http://radioserver.online:8824/;", "logo": "https://cdn.radia.sk/_radia/loga/coverflow/logos.png"},
         {"nazov": "Rádio Metropolitan", "url": "https://mpc2.mediacp.eu:8214/stream", "logo": "https://myonlineradio.sk/public/uploads/radio_img/radio-metropolitan/play_250_250.webp"},
-        {"nazov": "Rádio Klub", "url": "https://listen.radioking.com/radio/860681/stream/930496", "logo": "https://d3t3ozftmdmh3i.cloudfront.net/staging/podcast_uploaded_nologo/44153165/44153165-1756027969361-fe65b85dada35.jpg"},
+        {"nazov": "Rádio Klub", "url": "https://listen.radioking.com/radio/899861/stream/970496", "logo": "https://d3t3ozftmdmh3i.cloudfront.net/staging/podcast_uploaded_nologo/44153165/44153165-1756027969361-fe65b85dada35.jpg"},
         {"nazov": "Rádio Litera", "url": "https://icecast.stv.livebox.sk/litera_128.mp3", "logo": "https://cdn.radia.sk/_radia/loga/coverflow/litera.png"},
         {"nazov": "Rádio KIKS - Big 90s", "url": "https://online.radiokiks.sk:8000/kiks_big90s.mp3", "logo": "https://cdn.radia.sk/_radia/loga/coverflow/kiks-big-90s.png"},
         {"nazov": "Rádio KIKS - Rock Music", "url": "https://online.radiokiks.sk:8000/kiks_rock.mp3", "logo": "https://cdn.radia.sk/_radia/loga/coverflow/kiks-rock-music.png"},
@@ -163,6 +169,8 @@ def main():
     ]
 
     radia_cz = [
+        {"nazov": "ČRo Plzeň", "url": "https://rozhlas.stream/plzen_high.aac", "logo": "https://radia-online.com/files/styles/180/public/logo/cesky-rozhlas-plzen.jpg"},
+        {"nazov": "ČRo Pohoda", "url": "https://rozhlas.stream/pohoda_high.aac", "logo": "http://api.play.cz/static/radio_logo/t200/cropohoda.png"},
         {"nazov": "ČRo Pardubice", "url": "https://rozhlas.stream/pardubice_high.aac", "logo": "https://radia-online.com/files/styles/180/public/logo/cesky-rozhlas-pardubice.jpg"},
         {"nazov": "ČRo Plus", "url": "https://rozhlas.stream/plus_high.aac", "logo": "https://radia-online.com/files/styles/media/public/logo/cesky-rozhlas-plus.jpg"},
         {"nazov": "ČRo Olomouc", "url": "https://rozhlas.stream/olomouc_high.aac", "logo": "https://radia-online.com/files/styles/180/public/logo/cesky-rozhlas-olomouc.jpg"},
@@ -277,7 +285,7 @@ def main():
 
     elif action == 'latest_added':
         xbmcplugin.setContent(handle, 'songs')
-        # OPRAVA: Berieme začiatok zoznamov, keďže nové stanice pridávame hore.
+        # Zobrazuje najnovšie položky (zo začiatku zoznamov)
         najnovsie = radia_cz[:3] + radia_sk[:2]
         for radio in najnovsie:
             li = create_radio_item(radio, "Najnovšie pridané")
@@ -323,8 +331,12 @@ def main():
                 vybrane_radia = top_cz
                 kat = "Top 10 CZ"
         elif action == 'search_results':
-            query_str = params.get('query', '').lower()
-            vybrane_radia = [r for r in (radia_sk + radia_cz) if query_str in r['nazov'].lower()]
+            # OPRAVA: Vyhľadávanie bez diakritiky
+            query_str = remove_diacritics(params.get('query', '')).lower()
+            vybrane_radia = [
+                r for r in (radia_sk + radia_cz) 
+                if query_str in remove_diacritics(r['nazov']).lower()
+            ]
             kat = "Výsledky vyhľadávania"
 
         for radio in vybrane_radia:
