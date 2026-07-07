@@ -169,6 +169,8 @@ def main():
     ]
 
     radia_cz = [
+        {"nazov": "ČRo Rádio Junior", "url": "https://rozhlas.stream/juniormaxi_mp3_128.mp3", "logo": "https://d2emjept89nv7b.cloudfront.net/podcast-covers/460/podcast/4/1000/radio-junior.jpg"},
+        {"nazov": "ČRo Rádio Junior Písničky", "url": "https://rozhlas.stream/radio_junior_high.aac", "logo": "http://api.play.cz/static/radio_logo/t200/crojuniormaxi.png"},
         {"nazov": "ČRo Plzeň", "url": "https://rozhlas.stream/plzen_high.aac", "logo": "https://radia-online.com/files/styles/180/public/logo/cesky-rozhlas-plzen.jpg"},
         {"nazov": "ČRo Pohoda", "url": "https://rozhlas.stream/pohoda_high.aac", "logo": "http://api.play.cz/static/radio_logo/t200/cropohoda.png"},
         {"nazov": "ČRo Pardubice", "url": "https://rozhlas.stream/pardubice_high.aac", "logo": "https://radia-online.com/files/styles/180/public/logo/cesky-rozhlas-pardubice.jpg"},
@@ -285,7 +287,6 @@ def main():
 
     elif action == 'latest_added':
         xbmcplugin.setContent(handle, 'songs')
-        # Zobrazuje najnovšie položky (zo začiatku zoznamov)
         najnovsie = radia_cz[:3] + radia_sk[:2]
         for radio in najnovsie:
             li = create_radio_item(radio, "Najnovšie pridané")
@@ -331,7 +332,6 @@ def main():
                 vybrane_radia = top_cz
                 kat = "Top 10 CZ"
         elif action == 'search_results':
-            # OPRAVA: Vyhľadávanie bez diakritiky
             query_str = remove_diacritics(params.get('query', '')).lower()
             vybrane_radia = [
                 r for r in (radia_sk + radia_cz) 
