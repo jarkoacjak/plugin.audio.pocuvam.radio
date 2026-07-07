@@ -163,6 +163,8 @@ def main():
     ]
 
     radia_cz = [
+        {"nazov": "ČRo Olomouc", "url": "https://rozhlas.stream/olomouc_high.aac", "logo": "https://radia-online.com/files/styles/180/public/logo/cesky-rozhlas-olomouc.jpg"},
+        {"nazov": "ČRo Ostrava", "url": "https://rozhlas.stream/ostrava_high.aac", "logo": "https://radia-online.com/files/styles/180/public/logo/cesky-rozhlas-ostrava.jpg"},
         {"nazov": "ČRo Karlovy Vary", "url": "https://rozhlas.stream/karlovy_vary_high.aac", "logo": "https://www.boheminium.cz/wp-content/uploads/2015/08/CRo-KV.jpg"},
         {"nazov": "ČRo Liberec", "url": "https://rozhlas.stream/liberec_high.aac", "logo": "https://radia-online.com/files/styles/180/public/logo/cesky-rozhlas-liberec.jpg"},
         {"nazov": "ČRo Hradec Králové", "url": "https://rozhlas.stream/hradec_kralove_high.aac", "logo": "https://radia-online.com/files/styles/180/public/logo/cesky-rozhlas-hradec-kralove.jpg"},
