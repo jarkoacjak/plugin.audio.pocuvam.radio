@@ -169,6 +169,8 @@ def main():
     ]
 
     radia_cz = [
+        {"nazov": "Evropa 2 - Československé hity", "url": "http://ice.actve.net/web-e2-csweb", "logo": "https://cdn.radia.sk/_radia/loga/app/europa2-cs.webp?v=1"},
+        {"nazov": "Evropa 2 - Dance rádio", "url": "http://ice.actve.net/fm-dance-aac", "logo": "https://media.pcradio.app/media/logos/180/1004315/logo_lGWGsrZNhV.jpg?v=20260529-media-restore"},
         {"nazov": "Edu Rádio", "url": "http://ferncast.praha.eduradio.cz:8000/default", "logo": "https://www.eduradio.cz/src/uploads/og-2-1.webp"},
         {"nazov": "Evropa 2", "url": "https://playerservices.streamtheworld.com/api/livestream-redirect/EVROPA2AAC.aac", "logo": "https://myonlineradio.cz/public/uploads/radio_img/evropa-2/play_250_250.webp"},
         {"nazov": "Dance radio", "url": "https://28563.live.streamtheworld.com/DANCEAAC.aac", "logo": "https://cdn.radia.sk/_radia/loga/coverflow/dance.png"},
