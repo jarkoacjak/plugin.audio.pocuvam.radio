@@ -169,6 +169,8 @@ def main():
     ]
 
     radia_cz = [
+        {"nazov": "DAB Plus Top 40", "url": "https://ice3.radia.cz/dabtop40.mp3", "logo": "https://www.dabplus-top40.cz/images/DAB-Plus-Top40_logo.jpg"},
+        {"nazov": "Dance Club Radio", "url": "http://mp3stream4.abradio.cz/dance128.mp3", "logo": "https://myonlineradio.hu/public/uploads/radio_img/club-dance-radio/play_250_250.webp"},
         {"nazov": "ČRo Vysočina", "url": "https://rozhlas.stream/vysocina_high.aac", "logo": "https://radia-online.com/files/styles/180/public/logo/cesky-rozhlas-vysocina.jpg"},
         {"nazov": "ČRo Zlín", "url": "https://rozhlas.stream/zlin_high.aac", "logo": "https://cdn-profiles.tunein.com/s308134/images/logog.png"},
         {"nazov": "ČRo Střední Čechy", "url": "https://rozhlas.stream/region_high.aac", "logo": "https://radia-online.com/files/styles/180/public/logo/cesky-rozhlas-strednicechy_0.jpg"},
