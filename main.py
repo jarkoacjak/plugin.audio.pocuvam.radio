@@ -169,6 +169,8 @@ def main():
     ]
 
     radia_cz = [
+        {"nazov": "Evropa 2 - Flashback", "url": "http://ice.actve.net/web-e2-flashback", "logo": "https://big-radio.net/uploads/posts/2025-08/evropa-2-flashback.webp"},
+        {"nazov": "Evropa 2 - Movin'", "url": "http://ice.actve.net/web-e2-movin", "logo": "https://myonlineradio.cz/public/uploads/radio_img/evropa-2/play_250_250.webp"},
         {"nazov": "Evropa 2 - Československé hity", "url": "http://ice.actve.net/web-e2-csweb", "logo": "https://cdn.radia.sk/_radia/loga/app/europa2-cs.webp?v=1"},
         {"nazov": "Evropa 2 - Dance rádio", "url": "http://ice.actve.net/fm-dance-aac", "logo": "https://media.pcradio.app/media/logos/180/1004315/logo_lGWGsrZNhV.jpg?v=20260529-media-restore"},
         {"nazov": "Edu Rádio", "url": "http://ferncast.praha.eduradio.cz:8000/default", "logo": "https://www.eduradio.cz/src/uploads/og-2-1.webp"},
