@@ -169,6 +169,8 @@ def main():
     ]
 
     radia_cz = [
+        {"nazov": "ČRo Vysočina", "url": "https://rozhlas.stream/vysocina_high.aac", "logo": "https://radia-online.com/files/styles/180/public/logo/cesky-rozhlas-vysocina.jpg"},
+        {"nazov": "ČRo Zlín", "url": "https://rozhlas.stream/zlin_high.aac", "logo": "https://cdn-profiles.tunein.com/s308134/images/logog.png"},
         {"nazov": "ČRo Střední Čechy", "url": "https://rozhlas.stream/region_high.aac", "logo": "https://radia-online.com/files/styles/180/public/logo/cesky-rozhlas-strednicechy_0.jpg"},
         {"nazov": "ČRo Vltava", "url": "https://rozhlas.stream/vltava_high.aac", "logo": "https://d2emjept89nv7b.cloudfront.net/podcast-covers/458/podcast/2/1000/vltava.jpg"},
         {"nazov": "ČRo Rádiožurnál Sport", "url": "https://rozhlas.stream/radiozurnal_sport_high.aac", "logo": "https://i.ytimg.com/vi/VP-uZQpUfA8/maxresdefault.jpg"},
