@@ -169,6 +169,8 @@ def main():
     ]
 
     radia_cz = [
+        {"nazov": "ČRo Střední Čechy", "url": "https://rozhlas.stream/region_high.aac", "logo": "https://radia-online.com/files/styles/180/public/logo/cesky-rozhlas-strednicechy_0.jpg"},
+        {"nazov": "ČRo Vltava", "url": "https://rozhlas.stream/vltava_high.aac", "logo": "https://d2emjept89nv7b.cloudfront.net/podcast-covers/458/podcast/2/1000/vltava.jpg"},
         {"nazov": "ČRo Rádiožurnál Sport", "url": "https://rozhlas.stream/radiozurnal_sport_high.aac", "logo": "https://i.ytimg.com/vi/VP-uZQpUfA8/maxresdefault.jpg"},
         {"nazov": "ČRo Sever", "url": "https://rozhlas.stream/sever_high.aac", "logo": "https://images.zeno.fm/pb4SdJj1G0qlswH3pzv7z7ZP2dWJ54qbrER-twZMozQ/rs:fill:288:288/g:ce:0:0/aHR0cHM6Ly9wcm94eS56ZW5vLmZtL2NvbnRlbnQvc3RhdGlvbnMvOGI5M2VkZmYtNTQ5Ny00YjBjLTlhOGEtNDZhMWJlOTQ4YWFmL2ltYWdlLz91PTE3MTM5MDUzNjMwMDA.webp"},
         {"nazov": "ČRo Radio Wave", "url": "https://rozhlas.stream/wave_aac_128.aac", "logo": "https://cdn.sanity.io/images/orhkaa59/production/196ae07e3b024dbe6a38c7692ef51cdc4f5aad61-1000x1000.jpg"},
@@ -293,7 +295,7 @@ def main():
 
     elif action == 'latest_added':
         xbmcplugin.setContent(handle, 'songs')
-        najnovsie = radia_cz[:3] + radia_sk[:2]
+        najnovsie = radia_cz[:2] + radia_sk[:2]
         for radio in najnovsie:
             li = create_radio_item(radio, "Najnovšie pridané")
             play_url = build_url({'action': 'play', 'url': radio['url'], 'nazov': radio['nazov'], 'logo': radio.get('logo', '')})
