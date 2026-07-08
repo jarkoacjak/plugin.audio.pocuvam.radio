@@ -169,6 +169,8 @@ def main():
     ]
 
     radia_cz = [
+        {"nazov": "Edu Rádio", "url": "http://ferncast.praha.eduradio.cz:8000/default", "logo": "https://www.eduradio.cz/src/uploads/og-2-1.webp"},
+        {"nazov": "Evropa 2", "url": "https://playerservices.streamtheworld.com/api/livestream-redirect/EVROPA2AAC.aac", "logo": "https://myonlineradio.cz/public/uploads/radio_img/evropa-2/play_250_250.webp"},
         {"nazov": "Dance radio", "url": "https://28563.live.streamtheworld.com/DANCEAAC.aac", "logo": "https://cdn.radia.sk/_radia/loga/coverflow/dance.png"},
         {"nazov": "Drumandbass Radio", "url": "http://ice3.abradio.cz/shadowbox128.mp3", "logo": ""},
         {"nazov": "DAB Plus Top 40", "url": "https://ice3.radia.cz/dabtop40.mp3", "logo": "https://www.dabplus-top40.cz/images/DAB-Plus-Top40_logo.jpg"},
@@ -214,7 +216,6 @@ def main():
         {"nazov": "Alternative Times Radio", "url": "http://ice3.abradio.cz/alternative128.mp3", "logo": "https://radia.cz/media/images/0001/01/48cd28c2dab73f011e8e64dc0919ef57a7374883.png"},
         {"nazov": "Astra Rádio", "url": "https://astra.icecast.cz/", "logo": "https://myonlineradio.cz/public/uploads/radio_img/astra-radio/fb_cover.jpg"},
         {"nazov": "Rádio Kiss", "url": "https://n25a-eu.rcs.revma.com/asn0cmvb938uv", "logo": "https://www.kiss.cz/files/design/logo.png"},
-        {"nazov": "Evropa 2", "url": "https://ice.actve.net/fm-evropa2-128", "logo": "https://www.evropa2.cz/wp-content/themes/evropa2/assets/img/logo.png"},
         {"nazov": "BlackFM Radio", "url": "http://icecast2.play.cz/blackfm-radio-192.mp3", "logo": "https://blackfm.cz/image/freestyle/blackfm_logo_www.jpg"},
         {"nazov": "Blue Radio", "url": "https://stream.blueradio.cz/live", "logo": "https://stream.blueradio.cz/img/logo.png"},
         {"nazov": "Bojler Room", "url": "https://ice4.abradio.cz/bojler_room_128.aac", "logo": "https://radia.cz/media/images/0001/01/5f75dd2c71cc2919a4a9e3b9bac72f341d0780d1.svg"},
@@ -238,7 +239,7 @@ def main():
         {"nazov": "Český Blaník", "url": "https://playerservices.streamtheworld.com/api/livestream-redirect/RADIO_BLANIKCZ_128.mp3", "logo": "https://radia.cz/media/default/0001/01/663721c3e5e911880a625e89abc926c8c882bce3.svg"},
         {"nazov": "Rádio Impuls", "url": "http://icecast5.play.cz/impuls128.mp3", "logo": "https://myonlineradio.cz/public/uploads/radio_img/radio-impuls/play_250_250.webp"},
         {"nazov": "Rádio Kiss", "url": "https://n25a-eu.rcs.revma.com/asn0cmvb938uv", "logo": "https://www.kiss.cz/files/design/logo.png"},
-        {"nazov": "Evropa 2", "url": "https://ice.actve.net/fm-evropa2-128", "logo": "https://www.evropa2.cz/wp-content/themes/evropa2/assets/img/logo.png"},
+        {"nazov": "Evropa 2", "url": "https://playerservices.streamtheworld.com/api/livestream-redirect/EVROPA2AAC.aac", "logo": "https://myonlineradio.cz/public/uploads/radio_img/evropa-2/play_250_250.webp"},
         {"nazov": "Country Radio", "url": "https://stream.rcs.revma.com/h7rwanvb938uv", "logo": "https://myonlineradio.cz/public/uploads/radio_img/country-radio/fb_cover.jpg"},
         {"nazov": "Classic Praha", "url": "https://icecast8.play.cz/classic128.mp3", "logo": "https://static.mytuner.mobi/media/tvos_radios/153/classic-praha.a62cf508.png"},
         {"nazov": "Color Music Radio", "url": "http://icecast6.play.cz/color192.mp3", "logo": "https://myonlineradio.cz/public/uploads/radio_img/color-music-radio/play_250_250.webp"},
@@ -408,13 +409,3 @@ def main():
             play_item.setArt({'thumb': full_logo, 'icon': full_logo, 'logo': full_logo, 'clearlogo': full_logo})
             
         try:
-            info = play_item.getMusicInfoTag()
-            info.setTitle(nazov_radia)
-            info.setArtist(["Rádiový stream"])
-        except:
-            pass
-            
-        xbmcplugin.setResolvedUrl(handle, True, play_item)
-
-if __name__ == '__main__':
-    main()
