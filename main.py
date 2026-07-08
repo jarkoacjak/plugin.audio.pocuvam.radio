@@ -407,5 +407,19 @@ def main():
         if logo_radia:
             full_logo = logo_radia + '|User-Agent=Mozilla/5.0'
             play_item.setArt({'thumb': full_logo, 'icon': full_logo, 'logo': full_logo, 'clearlogo': full_logo})
+
+if logo_radia:
+            full_logo = logo_radia + '|User-Agent=Mozilla/5.0'
+            play_item.setArt({'thumb': full_logo, 'icon': full_logo, 'logo': full_logo, 'clearlogo': full_logo})
             
         try:
+            info = play_item.getMusicInfoTag()
+            info.setTitle(nazov_radia)
+            info.setArtist(["Rádiový stream"])
+        except:
+            pass
+            
+        xbmcplugin.setResolvedUrl(handle, True, play_item)
+
+if __name__ == '__main__':
+    main()
