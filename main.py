@@ -169,6 +169,8 @@ def main():
     ]
 
     radia_cz = [
+        {"nazov": "ČRo Rádiožurnál Sport", "url": "https://rozhlas.stream/radiozurnal_sport_high.aac", "logo": "https://i.ytimg.com/vi/VP-uZQpUfA8/maxresdefault.jpg"},
+        {"nazov": "ČRo Sever", "url": "https://rozhlas.stream/sever_high.aac", "logo": "https://images.zeno.fm/pb4SdJj1G0qlswH3pzv7z7ZP2dWJ54qbrER-twZMozQ/rs:fill:288:288/g:ce:0:0/aHR0cHM6Ly9wcm94eS56ZW5vLmZtL2NvbnRlbnQvc3RhdGlvbnMvOGI5M2VkZmYtNTQ5Ny00YjBjLTlhOGEtNDZhMWJlOTQ4YWFmL2ltYWdlLz91PTE3MTM5MDUzNjMwMDA.webp"},
         {"nazov": "ČRo Radio Wave", "url": "https://rozhlas.stream/wave_aac_128.aac", "logo": "https://cdn.sanity.io/images/orhkaa59/production/196ae07e3b024dbe6a38c7692ef51cdc4f5aad61-1000x1000.jpg"},
         {"nazov": "ČRo Rádiožurnál", "url": "https://rozhlas.stream/radiozurnal_low.aac", "logo": "https://informace.rozhlas.cz/sites/default/files/images/03965001.jpeg"},
         {"nazov": "ČRo Prague International", "url": "https://rozhlas.stream/cro7_mp3_128.mp3", "logo": "https://radia-online.com/files/styles/180/public/logo/cesky-rozhlas-radio-prague-international.jpg"},
