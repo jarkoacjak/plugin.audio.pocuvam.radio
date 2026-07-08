@@ -169,6 +169,10 @@ def main():
     ]
 
     radia_cz = [
+        {"nazov": "ČRo Radio Wave", "url": "https://rozhlas.stream/wave_aac_128.aac", "logo": "https://cdn.sanity.io/images/orhkaa59/production/196ae07e3b024dbe6a38c7692ef51cdc4f5aad61-1000x1000.jpg"},
+        {"nazov": "ČRo Rádiožurnál", "url": "https://rozhlas.stream/radiozurnal_low.aac", "logo": "https://informace.rozhlas.cz/sites/default/files/images/03965001.jpeg"},
+        {"nazov": "ČRo Prague International", "url": "https://rozhlas.stream/cro7_mp3_128.mp3", "logo": "https://radia-online.com/files/styles/180/public/logo/cesky-rozhlas-radio-prague-international.jpg"},
+        {"nazov": "ČRo Rádio Praha", "url": "https://rozhlas.stream/radio_dab_praha_high.aac", "logo": "https://www.liveradio.ie/files/images/107632/resized/180x172c/cx.png"},
         {"nazov": "ČRo Rádio Junior", "url": "https://rozhlas.stream/juniormaxi_mp3_128.mp3", "logo": "https://d2emjept89nv7b.cloudfront.net/podcast-covers/460/podcast/4/1000/radio-junior.jpg"},
         {"nazov": "ČRo Rádio Junior Písničky", "url": "https://rozhlas.stream/radio_junior_high.aac", "logo": "http://api.play.cz/static/radio_logo/t200/crojuniormaxi.png"},
         {"nazov": "ČRo Plzeň", "url": "https://rozhlas.stream/plzen_high.aac", "logo": "https://radia-online.com/files/styles/180/public/logo/cesky-rozhlas-plzen.jpg"},
