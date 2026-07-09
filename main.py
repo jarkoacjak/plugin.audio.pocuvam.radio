@@ -115,7 +115,7 @@ def main():
         {"nazov": "Rádio KIKS - Big 90s", "url": "https://online.radiokiks.sk:8000/kiks_big90s.mp3", "logo": "https://cdn.radia.sk/_radia/loga/coverflow/kiks-big-90s.png"},
         {"nazov": "Rádio KIKS - Rock Music", "url": "https://online.radiokiks.sk:8000/kiks_rock.mp3", "logo": "https://cdn.radia.sk/_radia/loga/coverflow/kiks-rock-music.png"},
         {"nazov": "Rádio KIKS", "url": "https://online.radiokiks.sk:8000/kiks_hq.mp3", "logo": "https://cdn.radia.sk/_radia/loga/app/kiks.webp?v=1"},
-        {"nazov": "Rádio KIKS - Big 80s", "url": "https://online.radiokiks.sk:8000/kiks_big80s.mp3", "logo": "https://radiokiks.net/wp-content/uploads/2024/08/Logo_BIG_80.png"},
+        {"nazov": "Rádio KIKS - Big 80s", "url": "https://online.radiokiks.sk:8000/kiks_big80s.mp3", "logo": "https://getlokal.sk/image/custom/logo_big80.png"},
         {"nazov": "Rádio Jemné Chillout", "url": "https://stream.bauermedia.sk/chillout-hi.mp3", "logo": "https://cdn.radia.sk/_radia/loga/coverflow/jemne-chillout.png"},
         {"nazov": "Rádio Junior", "url": "https://icecast.stv.livebox.sk/junior_128.mp3", "logo": "https://myonlineradio.sk/public/uploads/radio_img/radio-junior/fb_cover.jpg"},
         {"nazov": "Rádio Janko Hraško", "url": "http://78.24.9.110:31088/;", "logo": "https://myonlineradio.sk/public/uploads/radio_img/radio-janko-hrasko/play_250_250.webp"},
@@ -169,6 +169,8 @@ def main():
     ]
 
     radia_cz = [
+        {"nazov": "Fajn Rock Music", "url": "http://icecast2.play.cz/fajnrock192.mp3", "logo": ""},
+        {"nazov": "Fajn Vibe", "url": "https://ice3.radia.cz/fajn_vibe_128.mp3", "logo": "https://radia.cz/media/images/0001/01/b65514b7cb37d5f159f988822e8b1dab29edfc8b.svg"},
         {"nazov": "Fajn Fresh Radio", "url": "http://ice.abradio.cz/fajnfresh128.mp3", "logo": "https://fajnradio.cz/content/id_streams/2.svg"},
         {"nazov": "Fajn Radio", "url": "https://playerservices.streamtheworld.com/api/livestream-redirect/FAJN_RADIO_128.mp3", "logo": "https://radia.cz/media/images/0001/01/b65514b7cb37d5f159f988822e8b1dab29edfc8b.svg"},
         {"nazov": "Evropa 2 - Top 40", "url": "http://ice.actve.net/web-e2-top40", "logo": "https://myonlineradio.cz/public/uploads/radio_img/evropa-2/play_250_250.webp"},
