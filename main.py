@@ -169,6 +169,8 @@ def main():
     ]
 
     radia_cz = [
+        {"nazov": "Fajn Fresh Radio", "url": "http://ice.abradio.cz/fajnfresh128.mp3", "logo": "https://fajnradio.cz/content/id_streams/2.svg"},
+        {"nazov": "Fajn Radio", "url": "https://playerservices.streamtheworld.com/api/livestream-redirect/FAJN_RADIO_128.mp3", "logo": "https://radia.cz/media/images/0001/01/b65514b7cb37d5f159f988822e8b1dab29edfc8b.svg"},
         {"nazov": "Evropa 2 - Top 40", "url": "http://ice.actve.net/web-e2-top40", "logo": "https://myonlineradio.cz/public/uploads/radio_img/evropa-2/play_250_250.webp"},
         {"nazov": "Expres FM", "url": "http://icecast8.play.cz/expres128mp3", "logo": "https://myonlineradio.cz/public/uploads/radio_img/expres-fm/play_250_250.webp"},
         {"nazov": "Evropa 2 - Flashback", "url": "http://ice.actve.net/web-e2-flashback", "logo": "https://big-radio.net/uploads/posts/2025-08/evropa-2-flashback.webp"},
@@ -181,7 +183,7 @@ def main():
         {"nazov": "Drumandbass Radio", "url": "http://ice3.abradio.cz/shadowbox128.mp3", "logo": ""},
         {"nazov": "DAB Plus Top 40", "url": "https://ice3.radia.cz/dabtop40.mp3", "logo": "https://www.dabplus-top40.cz/images/DAB-Plus-Top40_logo.jpg"},
         {"nazov": "Dance Club Radio", "url": "http://mp3stream4.abradio.cz/dance128.mp3", "logo": "https://myonlineradio.hu/public/uploads/radio_img/club-dance-radio/play_250_250.webp"},
-        {"nazov": "ČRo Vysočina", "url": "https://rozhlas.stream/vysocina_high.aac", "logo": "https://radia-online.com/files/styles/180/public/logo/cesky-rozhlas-vysocina.jpg"},
+        {"nazov": "ČRo Vysočina", "url": "https://rozhlas.stream/vysocina_high.aac", "logo": "https://radia-online.com/files/styles/180/public/logo/cesky-rozhras-vysocina.jpg"},
         {"nazov": "ČRo Zlín", "url": "https://rozhlas.stream/zlin_high.aac", "logo": "https://cdn-profiles.tunein.com/s308134/images/logog.png"},
         {"nazov": "ČRo Střední Čechy", "url": "https://rozhlas.stream/region_high.aac", "logo": "https://radia-online.com/files/styles/180/public/logo/cesky-rozhlas-strednicechy_0.jpg"},
         {"nazov": "ČRo Vltava", "url": "https://rozhlas.stream/vltava_high.aac", "logo": "https://d2emjept89nv7b.cloudfront.net/podcast-covers/458/podcast/2/1000/vltava.jpg"},
