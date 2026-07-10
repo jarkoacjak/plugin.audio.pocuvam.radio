@@ -163,12 +163,14 @@ def main():
         {"nazov": "Rádio Frontinus", "url": "http://stream.frontinus.sk:8000/frontinus128.mp3", "logo": "https://myonlineradio.sk/public/uploads/radio_img/radio-frontinus/play_250_250.webp"},
         {"nazov": "Rádio Expres", "url": "https://stream.expres.sk/128.mp3", "logo": "https://www.radia.sk/_radia/loga/coverflow/expres.png"},
         {"nazov": "Rádio Melody", "url": "https://stream.bauermedia.sk/melody-hi.mp3", "logo": "https://www.radiomelody.sk/cover.png?f=raw"},
-        {"nazov": "Rádio Beta", "url": "http://109.71.67.102:8000/beta_live_high.mp3", "logo": "https://myonlineradio.sk/public/uploads/radio_img/radio-beta/play_250_250.webp"},
+        {"nazov": "Rádio Beta", "url": "http://109.71.71.102:8000/beta_live_high.mp3", "logo": "https://myonlineradio.sk/public/uploads/radio_img/radio-beta/play_250_250.webp"},
         {"nazov": "Fun Rádio", "url": "https://stream.funradio.sk:8000/fun128.mp3", "logo": "https://myonlineradio.sk/public/uploads/radio_img/fun-radio/play_250_250.webp"},
         {"nazov": "Rádio Vlna", "url": "http://stream.radiovlna.sk/vlna-hi.mp3", "logo": "https://myonlineradio.sk/public/uploads/radio_img/radio-vlna/play_250_250.webp"}
     ]
 
     radia_cz = [
+        {"nazov": "Free Rádio 107 FM", "url": "http://icecast8.play.cz/freeradio128.mp3", "logo": "https://myonlineradio.cz/public/uploads/radio_img/free-radio-107-fm/play_250_250.webp"},
+        {"nazov": "Frekvence 1", "url": "https://playerservices.streamtheworld.com/api/livestream-redirect/FREKVENCE1AAC.aac", "logo": "https://yt3.googleusercontent.com/ytc/AIdro_nZXmLx1NQVa-wjzcqa2CZjKvsHPxwsZkW-DfY52CvrRw=s900-c-k-c0x00ffffff-no-rj"},
         {"nazov": "Fajn Rock Music", "url": "http://icecast2.play.cz/fajnrock192.mp3", "logo": ""},
         {"nazov": "Fajn Vibe", "url": "https://ice3.radia.cz/fajn_vibe_128.mp3", "logo": "https://radia.cz/media/images/0001/01/b65514b7cb37d5f159f988822e8b1dab29edfc8b.svg"},
         {"nazov": "Fajn Fresh Radio", "url": "http://ice.abradio.cz/fajnfresh128.mp3", "logo": "https://fajnradio.cz/content/id_streams/2.svg"},
