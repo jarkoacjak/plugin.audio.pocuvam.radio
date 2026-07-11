@@ -169,6 +169,8 @@ def main():
     ]
 
     radia_cz = [
+        {"nazov": "Frekvence 1 - Legendy", "url": "http://ice.actve.net/web-f1-legendy", "logo": "https://big-radio.net/uploads/posts/2025-08/legendy-frekvence-1.webp"},
+        {"nazov": "Frekvence 1 - Osmdesátky", "url": "http://ice.actve.net/web-80", "logo": "https://big-radio.net/uploads/posts/2025-08/osmdesatky-frekvence-1.webp"},
         {"nazov": "Free Rádio 107 FM", "url": "http://icecast8.play.cz/freeradio128.mp3", "logo": "https://myonlineradio.cz/public/uploads/radio_img/free-radio-107-fm/play_250_250.webp"},
         {"nazov": "Frekvence 1", "url": "https://playerservices.streamtheworld.com/api/livestream-redirect/FREKVENCE1AAC.aac", "logo": "https://yt3.googleusercontent.com/ytc/AIdro_nZXmLx1NQVa-wjzcqa2CZjKvsHPxwsZkW-DfY52CvrRw=s900-c-k-c0x00ffffff-no-rj"},
         {"nazov": "Fajn Rock Music", "url": "http://icecast2.play.cz/fajnrock192.mp3", "logo": ""},
