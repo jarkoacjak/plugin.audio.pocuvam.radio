@@ -61,6 +61,7 @@ def main():
 
     # --- DATABÁZA RÁDIÍ ---
     radia_sk = [
+        {"nazov": "Rádio Sebastian", "url": "https://stream-179.surfernetwork.com/jkrusgbmbtcvv?zt=eyJhbGciOiJIUzI1NiJ9.eyJzdHJlYW0iOiJqa3J1c2dibWJ0Y3Z2IiwiaG9zdCI6InN0cmVhbS0xNzkuc3VyZmVybmV0d29yay5jb20iLCJydHRsIjo1LCJqdGkiOiJWS1JTRDd3U1FNNnFCcEJRYVFtdDdBIiwiaWF0IjoxNzg0Mjg4MTM4LCJleHAiOjE3ODQyODgxOTh9.k-qR8EVifiFJZiu2F1xTWByvgnvA8bCbbfBwyVvBNpU", "logo": "https://proxy.zeno.fm/content/stations/3545956e-c9d3-4dad-a915-0f61775f4f6a/image/?u=1783883595000"},
         {"nazov": "Moveit Rádio", "url": "https://play.radiosebastian.eu/listen/moveitradiosk/radio.mp3", "logo": "https://myonlineradio.sk/public/uploads/radio_img/moveit-radio/play_250_250.webp"},
         {"nazov": "Fun Rádio Leto", "url": "https://stream.funradio.sk:8000/summer128.mp3", "logo": "https://cdn.radia.sk/_radia/loga/app/fun-letne-hity.webp?v=11"},
         {"nazov": "Fun Rádio Mileniálky", "url": "https://stream.funradio.sk:8000/milenialky128.mp3", "logo": "https://cdn.radia.sk/_radia/loga/coverflow/fun-milenialky.png"},
@@ -169,6 +170,8 @@ def main():
     ]
 
     radia_cz = [
+        {"nazov": "Funkstar", "url": "https://funkstar.radioca.st/stream", "logo": "https://lookaside.fbsbx.com/lookaside/crawler/media/?media_id=100063544901584"},
+        {"nazov": "GenWave Radio", "url": "https://genwave-radio.com/listen/genwave/radio.mp3", "logo": "https://i.postimg.cc/wBHWdtmn/1782197651495.png"},
         {"nazov": "Frekvence 1 - Legendy", "url": "http://ice.actve.net/web-f1-legendy", "logo": "https://big-radio.net/uploads/posts/2025-08/legendy-frekvence-1.webp"},
         {"nazov": "Frekvence 1 - Osmdesátky", "url": "http://ice.actve.net/web-80", "logo": "https://big-radio.net/uploads/posts/2025-08/osmdesatky-frekvence-1.webp"},
         {"nazov": "Free Rádio 107 FM", "url": "http://icecast8.play.cz/freeradio128.mp3", "logo": "https://myonlineradio.cz/public/uploads/radio_img/free-radio-107-fm/play_250_250.webp"},
@@ -316,7 +319,7 @@ def main():
 
     elif action == 'latest_added':
         xbmcplugin.setContent(handle, 'songs')
-        najnovsie = radia_cz[:2] + radia_sk[:2]
+        najnovsie = radia_cz[:2] + radia_sk[:1]
         for radio in najnovsie:
             li = create_radio_item(radio, "Najnovšie pridané")
             play_url = build_url({'action': 'play', 'url': radio['url'], 'nazov': radio['nazov'], 'logo': radio.get('logo', '')})
@@ -433,3 +436,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+  
